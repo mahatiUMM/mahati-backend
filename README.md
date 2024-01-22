@@ -8,6 +8,7 @@ MAHATI API using prisma and MySQL
 
 - [Introduction](#introduction)
 - [Installation](#installation)
+- [How to Run?](#how-to-run)
 - [Table of Endpoints](#table-of-endpoints)
 - [Libraries](#libraries)
 - [Project Stucture](#project-structure)
@@ -19,6 +20,12 @@ MAHATI API using prisma and MySQL
 > yarn install
 
 > pnpm install
+
+## How to Run
+
+- Create database
+- Edit env
+- Run the dev Script
 
 ## Table of Endpoints
 
