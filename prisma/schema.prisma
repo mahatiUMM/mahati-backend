@@ -7,87 +7,126 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Define the data model
-model Event {
-  id            Int      @id @default(autoincrement())
-  title         String
-  description   String
-  path_image    String?
-  created_at    DateTime @default(now())
-  user_id       String
-  user          User     @relation(fields: [user_id], references: [id])
+// Define the model for the 'blood_pressures' table
+model blood_pressures {
+  id        Int  @id @default(autoincrement())
+  user_id   Int
+  image     Int?
+  sistol    Int
+  diastole  Int
+  heartbeat Int
+
+  // Set foreign key relationship with the 'users' table
+  user users @relation(fields: [user_id], references: [id])
 }
 
-model ExchangeTransaction {
+// Define the model for the 'bookmarks' table
+model bookmarks {
+  id          Int     @id @default(autoincrement())
+  video_id    Int
+  user_id     Int
+  is_bookmark Boolean
+
+  // Set foreign key relationships
+  video videos @relation(fields: [video_id], references: [id])
+  user  users  @relation(fields: [user_id], references: [id])
+}
+
+// Define the model for the 'brochures' table
+model brochures {
+  id    Int    @id @default(autoincrement())
+  image String
+}
+
+// Define the model for the 'questionnaires' table
+model questionnaires {
+  id                      Int                       @id @default(autoincrement())
+  type                    Int
+  questionnaire_questions questionnaire_questions[]
+}
+
+// Define the model for the 'questionnaire_answers' table
+model questionnaire_answers {
+  id          Int @id @default(autoincrement())
+  question_id Int
+  answer      Int
+  user_id     Int
+
+  // Set foreign key relationships
+  question questionnaire_questions @relation(fields: [question_id], references: [id])
+  user     users                   @relation(fields: [user_id], references: [id])
+}
+
+// Define the model for the 'questionnaire_questions' table
+model questionnaire_questions {
+  id               Int    @id @default(autoincrement())
+  questionnaire_id Int
+  question         String
+
+  // Set foreign key relationship with the 'questionnaires' table
+  questionnaire         questionnaires          @relation(fields: [questionnaire_id], references: [id])
+  questionnaire_answers questionnaire_answers[]
+}
+
+// Define the model for the 'reminders' table
+model reminders {
+  id             Int     @id @default(autoincrement())
+  user_id        Int
+  medicine_name  String
+  medicine_taken Int
+  medicine_total Int
+  amount         Int
+  cause          String?
+  cap_size       Int
+
+  // Set foreign key relationship with the 'users' table
+  user      users       @relation(fields: [user_id], references: [id])
+  schedules schedules[]
+}
+
+// Define the model for the 'schedules' table
+model schedules {
   id          Int      @id @default(autoincrement())
-  items_id    Int
-  user_id     String
-  created_at  DateTime @default(now())
-  items       Item     @relation(fields: [items_id], references: [id])
-  user        User     @relation(fields: [user_id], references: [id])
+  reminder_id Int
+  time        DateTime
+  status      Int
+
+  // Set foreign key relationship with the 'reminders' table
+  reminder reminders @relation(fields: [reminder_id], references: [id])
 }
 
-model Item {
-  id            Int      @id @default(autoincrement())
-  name          String
-  points        String
-  total         Int
-  created_at    DateTime @default(now())
-  transaction   ExchangeTransaction[]
+// Define the model for the 'users' table
+model users {
+  id       Int     @id @default(autoincrement())
+  username String
+  email    String
+  password String
+  number   Int
+  photo    String?
+
+  // Define relationships with other tables
+  blood_pressures       blood_pressures[]
+  bookmarks             bookmarks[]
+  reminders             reminders[]
+  videos                videos[]
+  questionnaire_answers questionnaire_answers[]
+  RefreshToken          refresh_tokens[]
 }
 
-model RefreshToken {
-  user_id     String      @id
-  token       String   @unique
-  created_at  DateTime @default(now())
-  user        User     @relation(fields: [user_id], references: [id])
-}
-
-model Report {
-  id          Int      @id @default(autoincrement())
-  email       String
-  subject     String
-  location    String
-  created_at  DateTime @default(now())
-  user_id     String
-  user        User     @relation(fields: [user_id], references: [id])
-}
-
-enum Role {
-  ADMIN
-  USER
-}
-
-model User {
-  id                      String     @id @default(uuid())
-  name                    String
-  email                   String   @unique
-  password                String
-  role                    Role
-  points                  Int?
-  created_at              DateTime @default(now())
-  updated_at              DateTime @default(now())
-  events                  Event[]
-  exchangeTransactions    ExchangeTransaction[]
-  refreshTokens           RefreshToken[]
-  reports                 Report[]
-  messages                Message[]
-  chats                   Chat[]    @relation("members")
-}
-
-model Chat {
-  id          Int      @id @default(autoincrement())
-  members     User[]   @relation("members")
-  messages    Message[]
-  created_at  DateTime @default(now())
-}
-
-model Message {
-  id         Int      @id @default(autoincrement())
-  content    String
+model refresh_tokens {
+  user_id    Int      @id
+  token      String
   created_at DateTime @default(now())
-  user_id    String
-  chat_id    Int
-  user       User     @relation(fields: [user_id], references: [id])
-  chat       Chat     @relation(fields: [chat_id], references: [id])
+  user       users    @relation(fields: [user_id], references: [id])
+}
+
+// Define the model for the 'videos' table
+model videos {
+  id      Int    @id @default(autoincrement())
+  link    String
+  user_id Int
+
+  // Set foreign key relationship with the 'users' table
+  user      users       @relation(fields: [user_id], references: [id])
+  bookmarks bookmarks[]
 }
