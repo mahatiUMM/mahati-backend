@@ -6,28 +6,35 @@ import { authController } from "../controllers/auth.controller.js";
 import { reportController } from "../controllers/report.controller.js";
 import { userController } from "../controllers/user.controller.js";
 import { exchangeTransaction } from "../controllers/exchange.controller.js";
+import { bloodPressureController } from "../controllers/bloodPressure.controller.js";
 
 const routes = Router({ strict: true });
 
 // auth
 routes.post("/signup", authController.signUp);
 routes.post("/signin", authController.signIn);
+routes.get(
+  "/refresh",
+  tokenValidation(true),
+  authController.refreshAccessToken
+);
+routes.get("/profile", tokenValidation(), authController.getUser);
 
 // user
-routes.get("/user", tokenValidation(), userController.getUser);
-routes.post("/user/points", userController.postPointByUserId);
+// routes.get("/user", tokenValidation(), userController.getUser);
+// routes.post("/user/points", userController.postPointByUserId);
 
-// events
-routes.get("/events", eventController.getEvent);
-routes.post("/events", eventController.createEvent);
+// // events
+// routes.get("/events", eventController.getEvent);
+// routes.post("/events", eventController.createEvent);
 
-// report
-routes.get("/reports", reportController.getReport);
-routes.post("/reports", reportController.createReport);
+// // report
+// routes.get("/reports", reportController.getReport);
+// routes.post("/reports", reportController.createReport);
 
-// exchange
-routes.get("/exchange", exchangeTransaction.getExchangeTransactions);
-routes.get("/exchange/:user_id", exchangeTransaction.getExchangeTransactionsByUserId);
-routes.post("/exchange", exchangeTransaction.createExchangeTransaction);
+// // exchange
+// routes.get("/exchange", exchangeTransaction.getExchangeTransactions);
+// routes.get("/exchange/:user_id", exchangeTransaction.getExchangeTransactionsByUserId);
+// routes.post("/exchange", exchangeTransaction.createExchangeTransaction);
 
 export default routes;
