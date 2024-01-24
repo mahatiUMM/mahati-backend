@@ -20,21 +20,15 @@ routes.get(
 );
 routes.get("/profile", tokenValidation(), authController.getUser);
 
-// user
-// routes.get("/user", tokenValidation(), userController.getUser);
-// routes.post("/user/points", userController.postPointByUserId);
+//blood pressures
+routes.get("/blood_pressure", bloodPressureController.getAllBloodPressures);
+routes.get("/blood_pressure/:id", bloodPressureController.getBloodPressureById);
+routes.post("/blood_pressure", bloodPressureController.createBloodPressure);
+routes.put("/blood_pressure/:id", bloodPressureController.updateBloodPressure);
+routes.delete(
+  "/blood_pressure/:id",
+  bloodPressureController.deleteBloodPressure
+);
 
-// // events
-// routes.get("/events", eventController.getEvent);
-// routes.post("/events", eventController.createEvent);
-
-// // report
-// routes.get("/reports", reportController.getReport);
-// routes.post("/reports", reportController.createReport);
-
-// // exchange
-// routes.get("/exchange", exchangeTransaction.getExchangeTransactions);
-// routes.get("/exchange/:user_id", exchangeTransaction.getExchangeTransactionsByUserId);
-// routes.post("/exchange", exchangeTransaction.createExchangeTransaction);
 
 export default routes;
