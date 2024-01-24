@@ -101,7 +101,7 @@ model users {
   username String
   email    String
   password String
-  number   Int
+  number   String
   photo    String?
 
   // Define relationships with other tables
