@@ -7,6 +7,8 @@ import { reportController } from "../controllers/report.controller.js";
 import { userController } from "../controllers/user.controller.js";
 import { exchangeTransaction } from "../controllers/exchange.controller.js";
 import { bloodPressureController } from "../controllers/bloodPressure.controller.js";
+import { bookmarkController } from "../controllers/bookmark.controller.js";
+import { brochureController } from "../controllers/brochure.controller.js";
 
 const routes = Router({ strict: true });
 
@@ -29,6 +31,20 @@ routes.delete(
   "/blood_pressure/:id",
   bloodPressureController.deleteBloodPressure
 );
+
+//bookmark
+routes.get("/bookmark", bookmarkController.getAllBookmarks);
+routes.get("/bookmark/:id", bookmarkController.getBookmarkById);
+routes.post("/bookmark", bookmarkController.createBookmark);
+routes.put("/bookmark/:id", bookmarkController.updateBookmark);
+routes.delete("/bookmark/:id", bookmarkController.deleteBookmark);
+
+//brochure
+routes.get("/brochure", brochureController.getAllBrochures);
+routes.get("/brochure/:id", brochureController.getBrochureById);
+routes.post("/brochure", brochureController.createBrochure);
+routes.put("/brochure/:id", brochureController.updateBrochure);
+routes.delete("/brochure/:id", brochureController.deleteBrochure);
 
 
 export default routes;
