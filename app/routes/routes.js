@@ -9,6 +9,7 @@ import { exchangeTransaction } from "../controllers/exchange.controller.js";
 import { bloodPressureController } from "../controllers/bloodPressure.controller.js";
 import { bookmarkController } from "../controllers/bookmark.controller.js";
 import { brochureController } from "../controllers/brochure.controller.js";
+import { questionnaireController } from "../controllers/questionnaires.controller.js";
 
 const routes = Router({ strict: true });
 
@@ -45,6 +46,15 @@ routes.get("/brochure/:id", brochureController.getBrochureById);
 routes.post("/brochure", brochureController.createBrochure);
 routes.put("/brochure/:id", brochureController.updateBrochure);
 routes.delete("/brochure/:id", brochureController.deleteBrochure);
+
+//questionnaire
+routes.get("/questionnaire", questionnaireController.getAllQuestionnaires);
+routes.get("/questionnaire/:id", questionnaireController.getQuestionnaireById);
+routes.post("/questionnaire", questionnaireController.createQuestionnaire);
+routes.put("/questionnaire/:id", questionnaireController.updateQuestionnaire);
+routes.delete("/questionnaire/:id", questionnaireController.deleteQuestionnaire);
+
+
 
 
 export default routes;
