@@ -1,5 +1,5 @@
 import { prisma } from "../lib/dbConnect.js";
-export * as questionnaireController from "./questionnaires.controller.js";
+export * as questionnaireController from "./questionnaire.controller.js";
 
 // Create questionnaire
 export const createQuestionnaire = async (req, res, next) => {
