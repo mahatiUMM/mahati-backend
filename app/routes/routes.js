@@ -12,6 +12,7 @@ import { brochureController } from "../controllers/brochure.controller.js";
 import { questionnaireController } from "../controllers/questionnaire.controller.js";
 import { questionnaireQuestionController } from "../controllers/questionnaireQuestion.controller.js";
 import { reminderController } from "../controllers/reminder.controller.js";
+import { scheduleController } from "../controllers/schedule.controller.js";
 
 const routes = Router({ strict: true });
 
@@ -87,5 +88,12 @@ routes.get("/reminder/:id", reminderController.getReminderById);
 routes.post("/reminder", reminderController.createReminder);
 routes.put("/reminder/:id", reminderController.updateReminder);
 routes.delete("/reminder/:id", reminderController.deleteReminder);
+
+//schedule
+routes.get("/schedule", scheduleController.getAllSchedules);
+routes.get("/schedule/:id", scheduleController.getScheduleById);
+routes.post("/schedule", scheduleController.createSchedule);
+routes.put("/schedule/:id", scheduleController.updateSchedule);
+routes.delete("/schedule/:id", scheduleController.deleteSchedule);
 
 export default routes;
