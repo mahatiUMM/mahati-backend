@@ -9,7 +9,7 @@ import { exchangeTransaction } from "../controllers/exchange.controller.js";
 import { bloodPressureController } from "../controllers/bloodPressure.controller.js";
 import { bookmarkController } from "../controllers/bookmark.controller.js";
 import { brochureController } from "../controllers/brochure.controller.js";
-import { questionnaireController } from "../controllers/questionnaires.controller.js";
+import { questionnaireController } from "../controllers/questionnaire.controller.js";
 import { questionnaireQuestionController } from "../controllers/questionnaireQuestion.controller.js";
 
 const routes = Router({ strict: true });
@@ -53,16 +53,31 @@ routes.get("/questionnaire", questionnaireController.getAllQuestionnaires);
 routes.get("/questionnaire/:id", questionnaireController.getQuestionnaireById);
 routes.post("/questionnaire", questionnaireController.createQuestionnaire);
 routes.put("/questionnaire/:id", questionnaireController.updateQuestionnaire);
-routes.delete("/questionnaire/:id", questionnaireController.deleteQuestionnaire);
+routes.delete(
+  "/questionnaire/:id",
+  questionnaireController.deleteQuestionnaire
+);
 
 //questionnaire question
-routes.get("/questionnaire_question", questionnaireQuestionController.getAllQuestionnaireQuestions);
-routes.get("/questionnaire_question/:id", questionnaireQuestionController.getQuestionnaireQuestionById);
-routes.post("/questionnaire_question", questionnaireQuestionController.createQuestionnaireQuestion);
-routes.put("/questionnaire_question/:id", questionnaireQuestionController.updateQuestionnaireQuestion);
-routes.delete("/questionnaire_question/:id", questionnaireQuestionController.deleteQuestionnaireQuestion);
-
-
-
+routes.get(
+  "/questionnaire_question",
+  questionnaireQuestionController.getAllQuestionnaireQuestions
+);
+routes.get(
+  "/questionnaire_question/:id",
+  questionnaireQuestionController.getQuestionnaireQuestionById
+);
+routes.post(
+  "/questionnaire_question",
+  questionnaireQuestionController.createQuestionnaireQuestion
+);
+routes.put(
+  "/questionnaire_question/:id",
+  questionnaireQuestionController.updateQuestionnaireQuestion
+);
+routes.delete(
+  "/questionnaire_question/:id",
+  questionnaireQuestionController.deleteQuestionnaireQuestion
+);
 
 export default routes;
