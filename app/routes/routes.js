@@ -11,6 +11,7 @@ import { bookmarkController } from "../controllers/bookmark.controller.js";
 import { brochureController } from "../controllers/brochure.controller.js";
 import { questionnaireController } from "../controllers/questionnaire.controller.js";
 import { questionnaireQuestionController } from "../controllers/questionnaireQuestion.controller.js";
+import { reminderController } from "../controllers/reminder.controller.js";
 
 const routes = Router({ strict: true });
 
@@ -79,5 +80,12 @@ routes.delete(
   "/questionnaire_question/:id",
   questionnaireQuestionController.deleteQuestionnaireQuestion
 );
+
+//reminder
+routes.get("/reminder", reminderController.getAllReminders);
+routes.get("/reminder/:id", reminderController.getReminderById);
+routes.post("/reminder", reminderController.createReminder);
+routes.put("/reminder/:id", reminderController.updateReminder);
+routes.delete("/reminder/:id", reminderController.deleteReminder);
 
 export default routes;
