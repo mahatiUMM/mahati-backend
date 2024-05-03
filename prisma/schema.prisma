@@ -9,14 +9,14 @@ datasource db {
 
 // Define the model for the 'blood_pressures' table
 model blood_pressures {
-  id          Int  @id @default(autoincrement())
-  user_id     Int
-  image       String?
-  sistol      Int
-  diastole    Int
-  heartbeat   Int
-  created_at  DateTime  @default(now())
-  updated_at  DateTime?
+  id         Int       @id @default(autoincrement())
+  user_id    Int
+  image      String?
+  sistol     Int
+  diastole   Int
+  heartbeat  Int
+  created_at DateTime  @default(now())
+  updated_at DateTime?
 
   // Set foreign key relationship with the 'users' table
   user users @relation(fields: [user_id], references: [id])
@@ -24,10 +24,12 @@ model blood_pressures {
 
 // Define the model for the 'bookmarks' table
 model bookmarks {
-  id          Int     @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   video_id    Int
   user_id     Int
   is_bookmark Boolean
+  created_at  DateTime  @default(now())
+  updated_at  DateTime?
 
   // Set foreign key relationships
   video videos @relation(fields: [video_id], references: [id])
@@ -36,24 +38,33 @@ model bookmarks {
 
 // Define the model for the 'brochures' table
 model brochures {
-  id    Int    @id @default(autoincrement())
-  title String
-  image String
+  id         Int       @id @default(autoincrement())
+  title      String
+  image      String
+  created_at DateTime  @default(now())
+  updated_at DateTime?
 }
 
 // Define the model for the 'questionnaires' table
 model questionnaires {
   id                      Int                       @id @default(autoincrement())
   type                    Int
+  image                   String?
+  title                   String?
+  description             String?
+  created_at              DateTime                  @default(now())
+  updated_at              DateTime?
   questionnaire_questions questionnaire_questions[]
 }
 
 // Define the model for the 'questionnaire_answers' table
 model questionnaire_answers {
-  id          Int @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   question_id Int
   answer      Int
   user_id     Int
+  created_at  DateTime  @default(now())
+  updated_at  DateTime?
 
   // Set foreign key relationships
   question questionnaire_questions @relation(fields: [question_id], references: [id])
@@ -62,9 +73,11 @@ model questionnaire_answers {
 
 // Define the model for the 'questionnaire_questions' table
 model questionnaire_questions {
-  id               Int    @id @default(autoincrement())
+  id               Int       @id @default(autoincrement())
   questionnaire_id Int
   question         String
+  created_at       DateTime  @default(now())
+  updated_at       DateTime?
 
   // Set foreign key relationship with the 'questionnaires' table
   questionnaire         questionnaires          @relation(fields: [questionnaire_id], references: [id])
@@ -73,7 +86,7 @@ model questionnaire_questions {
 
 // Define the model for the 'reminders' table
 model reminders {
-  id             Int     @id @default(autoincrement())
+  id             Int       @id @default(autoincrement())
   user_id        Int
   medicine_name  String
   medicine_taken Int
@@ -81,6 +94,8 @@ model reminders {
   amount         Int
   cause          String?
   cap_size       Int
+  created_at     DateTime  @default(now())
+  updated_at     DateTime?
 
   // Set foreign key relationship with the 'users' table
   user      users       @relation(fields: [user_id], references: [id])
@@ -89,10 +104,12 @@ model reminders {
 
 // Define the model for the 'schedules' table
 model schedules {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   reminder_id Int
   time        DateTime
   status      Int
+  created_at  DateTime  @default(now())
+  updated_at  DateTime?
 
   // Set foreign key relationship with the 'reminders' table
   reminder reminders @relation(fields: [reminder_id], references: [id])
@@ -100,12 +117,14 @@ model schedules {
 
 // Define the model for the 'users' table
 model users {
-  id       Int     @id @default(autoincrement())
-  username String
-  email    String
-  password String
-  number   String
-  photo    String?
+  id         Int       @id @default(autoincrement())
+  username   String
+  email      String
+  password   String
+  number     String
+  photo      String?
+  created_at DateTime  @default(now())
+  updated_at DateTime?
 
   // Define relationships with other tables
   blood_pressures       blood_pressures[]
@@ -125,9 +144,11 @@ model refresh_tokens {
 
 // Define the model for the 'videos' table
 model videos {
-  id      Int    @id @default(autoincrement())
-  link    String
-  user_id Int
+  id         Int       @id @default(autoincrement())
+  link       String
+  user_id    Int
+  created_at DateTime  @default(now())
+  updated_at DateTime?
 
   // Set foreign key relationship with the 'users' table
   user      users       @relation(fields: [user_id], references: [id])
