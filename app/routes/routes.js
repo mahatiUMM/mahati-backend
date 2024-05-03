@@ -13,6 +13,7 @@ import { questionnaireController } from "../controllers/questionnaire.controller
 import { questionnaireQuestionController } from "../controllers/questionnaireQuestion.controller.js";
 import { reminderController } from "../controllers/reminder.controller.js";
 import { scheduleController } from "../controllers/schedule.controller.js";
+import { videoController } from "../controllers/video.controller.js";
 
 const routes = Router({ strict: true });
 
@@ -95,5 +96,12 @@ routes.get("/schedule/:id", scheduleController.getScheduleById);
 routes.post("/schedule", scheduleController.createSchedule);
 routes.put("/schedule/:id", scheduleController.updateSchedule);
 routes.delete("/schedule/:id", scheduleController.deleteSchedule);
+
+//video
+routes.get("/video", videoController.getAllVideos);
+routes.get("/video/:id", videoController.getVideoById);
+routes.post("/video", videoController.createVideo);
+routes.put("/video/:id", videoController.updateVideo);
+routes.delete("/video/:id", videoController.deleteVideo);
 
 export default routes;
