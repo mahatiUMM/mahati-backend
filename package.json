@@ -1,6 +1,6 @@
 {
   "name": "mahati-backend",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Mahati Backend",
   "main": "app.js",
   "type": "module",
