@@ -94,6 +94,7 @@ model reminders {
   amount         Int
   cause          String?
   cap_size       Int
+  medicine_time  String?
   created_at     DateTime  @default(now())
   updated_at     DateTime?
 

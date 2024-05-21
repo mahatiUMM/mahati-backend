@@ -5,7 +5,7 @@ import { verifyToken } from "../lib/tokenHandler.js"
 // Create reminder
 export const createReminder = async (req, res, next) => {
   try {
-    const { user_id, medicine_name, medicine_taken, medicine_total, amount, cause, cap_size } = req.body
+    const { user_id, medicine_name, medicine_taken, medicine_total, amount, cause, cap_size, medicine_time } = req.body
 
     const newReminder = await prisma.reminders.create({
       data: {
@@ -16,6 +16,7 @@ export const createReminder = async (req, res, next) => {
         amount,
         cause,
         cap_size,
+        medicine_time,
       },
     })
 
@@ -80,7 +81,7 @@ export const updateReminder = async (req, res, next) => {
     if (data?.status) return res.status(data.status).json(data)
 
     const reminderId = parseInt(req.params.id)
-    const { user_id, medicine_name, medicine_taken, medicine_total, amount, cause, cap_size } = req.body
+    const { user_id, medicine_name, medicine_taken, medicine_total, amount, cause, cap_size, medicine_time } = req.body
 
     const updatedReminder = await prisma.reminders.update({
       where: { id: reminderId },
@@ -92,6 +93,7 @@ export const updateReminder = async (req, res, next) => {
         amount,
         cause,
         cap_size,
+        medicine_time,
       },
       include: {
         user: true,
