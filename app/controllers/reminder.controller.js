@@ -7,6 +7,13 @@ export const createReminder = async (req, res, next) => {
   try {
     const { user_id, medicine_name, medicine_taken, medicine_total, amount, cause, cap_size, medicine_time } = req.body
 
+    if (!user_id || !medicine_name || !medicine_taken || !medicine_total || !amount || !cause || !cap_size || !medicine_time) {
+      return res.status(400).json({
+        status: 400,
+        message: "Please provide all required fields.",
+      })
+    }
+
     const newReminder = await prisma.reminders.create({
       data: {
         user_id,
