@@ -134,6 +134,41 @@ export const getUser = async (req, res, next) => {
   }
 }
 
+export const updateUser = async (req, res, next) => {
+  try {
+    const data = verifyToken(req.headers.access_token)
+    if (data?.status) return res.status(data.status).json(data)
+
+    const { id, username, email, number, photo } = req.body
+
+    if (!id || !username || !email || !number) {
+      return res.status(400).json({
+        status: 400,
+        message: "Please provide all required fields.",
+      })
+    }
+
+    const user = await prisma.users.update({
+      where: {
+        id: id,
+      },
+      data: {
+        username,
+        email,
+        number,
+        photo,
+      },
+    })
+
+    res.json({
+      status: 200,
+      user,
+    });
+  } catch (err) {
+    next(err)
+  }
+}
+
 export const refreshAccessToken = async (req, res, next) => {
   try {
     const refreshToken = req.headers.refresh_token

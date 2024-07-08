@@ -17,6 +17,7 @@ routes.post("/signup", authController.signUp)
 routes.post("/signin", authController.signIn)
 routes.get("/refresh", tokenValidation(true), authController.refreshAccessToken)
 routes.get("/profile", tokenValidation(), authController.getUser)
+routes.put("/profile", tokenValidation(), authController.updateUser)
 
 // blood pressures
 routes.get("/blood_pressure", tokenValidation(), bloodPressureController.getAllBloodPressures)
