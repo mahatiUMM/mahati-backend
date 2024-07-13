@@ -76,16 +76,18 @@ model questionnaire_questions {
   id               Int       @id @default(autoincrement())
   questionnaire_id Int
   question         String
-  available_answers AvailableAnswer[]
+  available_answers available_answers[]
   created_at       DateTime  @default(now())
   updated_at       DateTime?
-
+  
   // Set foreign key relationship with the 'questionnaires' table
   questionnaire         questionnaires          @relation(fields: [questionnaire_id], references: [id])
   questionnaire_answers questionnaire_answers[]
+  
+  @@map("questionnaire_questions")
 }
 
-model AvailableAnswer {
+model available_answers {
   id                       Int                 @id @default(autoincrement())
   questionnaireQuestionId  Int
   answer_text              String
