@@ -76,7 +76,7 @@ model questionnaire_questions {
   id               Int       @id @default(autoincrement())
   questionnaire_id Int
   question         String
-  available_answer AvailableAnswer[]
+  available_answers AvailableAnswer[]
   created_at       DateTime  @default(now())
   updated_at       DateTime?
 
