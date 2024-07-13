@@ -11,7 +11,9 @@ export const createQuestionnaireQuestion = async (req, res, next) => {
       await prisma.questionnaire_questions.create({
         data: {
           questionnaire_id,
-          available_answer,
+          available_answers: {
+            create: available_answer,
+          },
           question,
         },
       });
