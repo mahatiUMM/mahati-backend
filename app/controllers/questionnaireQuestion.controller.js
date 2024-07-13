@@ -34,7 +34,6 @@ export const getAllQuestionnaireQuestions = async (req, res, next) => {
       await prisma.questionnaire_questions.findMany({
         include: {
           questionnaire: true,
-          available_answers: true,
           questionnaire_answers: true,
         },
       });
@@ -58,7 +57,6 @@ export const getQuestionnaireQuestionById = async (req, res, next) => {
         where: { id: questionId },
         include: {
           questionnaire: true,
-          available_answers: true,
           questionnaire_answers: true,
         },
       });
