@@ -9,7 +9,7 @@ import { questionnaireQuestionController } from "../controllers/questionnaireQue
 import { reminderController } from "../controllers/reminder.controller.js";
 import { scheduleController } from "../controllers/schedule.controller.js";
 import { videoController } from "../controllers/video.controller.js";
-import { exportController } from "../controllers/export.controller.js";
+import { exportController, exportAllReminders } from "../controllers/export.controller.js";
 
 const routes = Router({ strict: true });
 
@@ -179,10 +179,17 @@ routes.post("/video", videoController.createVideo);
 routes.put("/video/:id", tokenValidation(), videoController.updateVideo);
 routes.delete("/video/:id", tokenValidation(), videoController.deleteVideo);
 
+// export
 routes.get(
   "/export/blood_pressure",
   tokenValidation(),
   exportController.exportAllBloodPressures
+);
+
+routes.get(
+  "/export/reminder",
+  tokenValidation(),
+  exportController.exportAllReminders
 );
 
 export default routes;
