@@ -1,11 +1,11 @@
-import { prisma } from "../lib/dbConnect.js"
-import { verifyToken } from "../lib/tokenHandler.js"
-export * as questionnaireController from "./questionnaire.controller.js"
+import { prisma } from "../lib/dbConnect.js";
+import { verifyToken } from "../lib/tokenHandler.js";
+export * as questionnaireController from "./questionnaire.controller.js";
 
 // Create questionnaire
 export const createQuestionnaire = async (req, res, next) => {
   try {
-    const { type, questionnaire_questions } = req.body
+    const { type, questionnaire_questions } = req.body;
 
     const newQuestionnaire = await prisma.questionnaires.create({
       data: {
@@ -17,68 +17,70 @@ export const createQuestionnaire = async (req, res, next) => {
       include: {
         questionnaire_questions: true,
       },
-    })
+    });
 
-    res.status(201).json({ success: true, data: newQuestionnaire })
+    res.status(201).json({ success: true, data: newQuestionnaire });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 // Get all questionnaires
 export const getAllQuestionnaires = async (req, res, next) => {
   try {
-    const data = verifyToken(req.headers.access_token)
-    if (data?.status) return res.status(data.status).json(data)
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
 
     const questionnaires = await prisma.questionnaires.findMany({
       include: {
         questionnaire_questions: true,
+        available_answers: true,
       },
-    })
+    });
 
-    res.json({ success: true, data: questionnaires })
+    res.json({ success: true, data: questionnaires });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 // Get questionnaire by ID
 export const getQuestionnaireById = async (req, res, next) => {
   try {
-    const data = verifyToken(req.headers.access_token)
-    if (data?.status) return res.status(data.status).json(data)
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
 
-    const questionnaireId = parseInt(req.params.id)
+    const questionnaireId = parseInt(req.params.id);
 
     const questionnaire = await prisma.questionnaires.findUnique({
       where: { id: questionnaireId },
       include: {
         questionnaire_questions: true,
+        available_answers: true,
       },
-    })
+    });
 
     if (!questionnaire) {
       return res.status(404).json({
         status: 404,
         message: "Questionnaire not found.",
-      })
+      });
     }
 
-    res.json({ success: true, data: questionnaire })
+    res.json({ success: true, data: questionnaire });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 // Update questionnaire by ID
 export const updateQuestionnaire = async (req, res, next) => {
   try {
-    const data = verifyToken(req.headers.access_token)
-    if (data?.status) return res.status(data.status).json(data)
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
 
-    const questionnaireId = parseInt(req.params.id)
-    const { type } = req.body
+    const questionnaireId = parseInt(req.params.id);
+    const { type } = req.body;
 
     const updatedQuestionnaire = await prisma.questionnaires.update({
       where: { id: questionnaireId },
@@ -88,28 +90,28 @@ export const updateQuestionnaire = async (req, res, next) => {
       include: {
         questionnaire_questions: true,
       },
-    })
+    });
 
-    res.json({ success: true, data: updatedQuestionnaire })
+    res.json({ success: true, data: updatedQuestionnaire });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 // Delete questionnaire by ID
 export const deleteQuestionnaire = async (req, res, next) => {
   try {
-    const data = verifyToken(req.headers.access_token)
-    if (data?.status) return res.status(data.status).json(data)
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
 
-    const questionnaireId = parseInt(req.params.id)
+    const questionnaireId = parseInt(req.params.id);
 
     const deletedQuestionnaire = await prisma.questionnaires.delete({
       where: { id: questionnaireId },
-    })
+    });
 
-    res.json({ success: true, data: deletedQuestionnaire })
+    res.json({ success: true, data: deletedQuestionnaire });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
