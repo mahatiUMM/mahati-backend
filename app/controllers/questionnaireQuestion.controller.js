@@ -24,6 +24,27 @@ export const createQuestionnaireQuestion = async (req, res, next) => {
   }
 };
 
+// Create questionnaire question answer
+export const createQuestionnaireQuestionAnswer = async (req, res, next) => {
+  try {
+    const { user_id, answers } = req.body;
+
+    for (const answer of answers) {
+      await prisma.questionnaire_answers.create({
+        data: {
+          user_id: user_id,
+          question_id: answer.questionnaireQuestionId,
+          answer: answer.answerId,
+        },
+      });
+    }
+
+    res.status(201).json({ success: true, msg: "Success Input Survey Data" });
+  } catch (error) {
+    next(error);
+  }
+}
+
 // Get all questionnaire questions
 export const getAllQuestionnaireQuestions = async (req, res, next) => {
   try {

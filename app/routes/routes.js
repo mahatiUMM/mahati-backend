@@ -123,6 +123,10 @@ routes.post(
   "/questionnaire_question",
   questionnaireQuestionController.createQuestionnaireQuestion
 );
+routes.post(
+  "/questionnaire_question_answer",
+  questionnaireQuestionController.createQuestionnaireQuestionAnswer
+);
 routes.put(
   "/questionnaire_question/:id",
   tokenValidation(),
