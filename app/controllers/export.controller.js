@@ -26,3 +26,27 @@ export const exportAllBloodPressures = async (req, res, next) => {
     next(error);
   }
 };
+
+// export all reminders for a user
+export const exportAllReminders = async (req, res, next) => {
+  try {
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
+
+    const reminders = await prisma.reminders.findMany({
+      where: { user_id: data.id },
+    });
+
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=reminderData.xlsx"
+    );
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.send(convertJSONToXLSX(reminders));
+  } catch (error) {
+    next(error);
+  }
+};
