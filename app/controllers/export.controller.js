@@ -50,3 +50,27 @@ export const exportAllReminders = async (req, res, next) => {
     next(error);
   }
 };
+
+// export all videos for a user
+export const exportAllVideos = async (req, res, next) => {
+  try {
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
+
+    const videos = await prisma.videos.findMany({
+      where: { user_id: data.id },
+    });
+
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=videoData.xlsx"
+    );
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.send(convertJSONToXLSX(videos));
+  } catch (error) {
+    next(error);
+  }
+}

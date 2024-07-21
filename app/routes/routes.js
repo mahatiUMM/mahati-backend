@@ -196,6 +196,12 @@ routes.get(
   exportController.exportAllReminders
 );
 
+routes.get(
+  "/export/video",
+  tokenValidation(),
+  exportController.exportAllVideos
+);
+
 // admin
 routes.post(
   "/admin/signin",
