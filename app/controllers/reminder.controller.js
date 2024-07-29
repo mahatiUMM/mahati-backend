@@ -114,6 +114,43 @@ export const updateReminder = async (req, res, next) => {
   }
 }
 
+// Accept reminder by ID
+export const acceptReminder = async (req, res, next) => {
+  try {
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
+
+    const reminderId = parseInt(req.params.id);
+
+    const currentReminder = await prisma.reminders.findUnique({
+      where: { id: reminderId },
+    });
+
+    if (!currentReminder) {
+      return res.status(404).json({ success: false, message: 'Reminder not found' });
+    }
+
+    const newMedicineTaken = currentReminder.medicine_taken + 1;
+    const updatedReminder = await prisma.reminders.update({
+      where: { id: reminderId },
+      data: {
+        medicine_taken: newMedicineTaken,
+        medicine_total: currentReminder.amount - newMedicineTaken,
+        updated_at: new Date(),
+      },
+      include: {
+        user: true,
+        schedules: true,
+      },
+    });
+
+    res.json({ success: true, data: updatedReminder });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
 // Delete reminder by ID
 export const deleteReminder = async (req, res, next) => {
   try {

@@ -146,6 +146,11 @@ routes.get(
   reminderController.getReminderById
 );
 routes.post("/reminder", reminderController.createReminder);
+routes.post(
+  "/accept_reminder/:id",
+  tokenValidation(),
+  reminderController.acceptReminder
+);
 routes.put(
   "/reminder/:id",
   tokenValidation(),
