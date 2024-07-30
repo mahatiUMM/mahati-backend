@@ -10,6 +10,7 @@ import { reminderController } from "../controllers/reminder.controller.js";
 import { scheduleController } from "../controllers/schedule.controller.js";
 import { videoController } from "../controllers/video.controller.js";
 import { exportController } from "../controllers/export.controller.js";
+import { userDashboardController } from "../controllers/userDashboard.controller.js";
 
 const routes = Router({ strict: true });
 
@@ -21,6 +22,14 @@ routes.get(
   tokenValidation(true),
   authController.refreshAccessToken
 );
+
+// userDashboard
+routes.get(
+  "/dashboard",
+  tokenValidation(),
+  userDashboardController.getUserDashboard
+);
+
 routes.get("/profile", tokenValidation(), authController.getUser);
 routes.put("/profile", tokenValidation(), authController.updateUser);
 
@@ -144,11 +153,6 @@ routes.get(
   "/reminder/:id",
   tokenValidation(),
   reminderController.getReminderById
-);
-routes.get(
-  "/reminderLowerMedicine",
-  tokenValidation(),
-  reminderController.getLowerReminderMedicine
 );
 routes.post("/reminder", reminderController.createReminder);
 routes.post(

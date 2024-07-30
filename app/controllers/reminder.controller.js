@@ -102,37 +102,6 @@ export const getReminderById = async (req, res, next) => {
   }
 };
 
-// Get LowerReminderMedicine
-export const getLowerReminderMedicine = async (req, res, next) => {
-  try {
-    const data = verifyToken(req.headers.access_token);
-    if (data?.status) return res.status(data.status).json(data);
-
-    const reminder = await prisma.reminders.findMany({
-      where: {
-        medicine_total: {
-          lte: 3,
-        },
-        user_id: data.id,
-      },
-      include: {
-        schedules: true,
-      },
-    });
-
-    if (!reminder) {
-      return res.status(404).json({
-        status: 404,
-        message: "Reminder not found.",
-      });
-    }
-
-    res.json({ success: true, data: reminder });
-  } catch (error) {
-    next(error);
-  }
-};
-
 // Update reminder by ID
 export const updateReminder = async (req, res, next) => {
   try {
