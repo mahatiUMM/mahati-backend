@@ -128,7 +128,7 @@ model schedules {
   updated_at  DateTime?
 
   // Set foreign key relationship with the 'reminders' table
-  reminder reminders @relation(fields: [reminder_id], references: [id])
+  reminder reminders @relation(fields: [reminder_id], references: [id], onDelete: Cascade)
 }
 
 // Define the model for the 'users' table

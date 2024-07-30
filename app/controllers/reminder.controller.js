@@ -1,17 +1,35 @@
-import { prisma } from "../lib/dbConnect.js"
-export * as reminderController from "./reminder.controller.js"
-import { verifyToken } from "../lib/tokenHandler.js"
+import { prisma } from "../lib/dbConnect.js";
+export * as reminderController from "./reminder.controller.js";
+import { verifyToken } from "../lib/tokenHandler.js";
 
 // Create reminder
 export const createReminder = async (req, res, next) => {
   try {
-    const { user_id, medicine_name, medicine_taken, medicine_total, amount, cause, cap_size, medicine_time } = req.body
+    const {
+      user_id,
+      medicine_name,
+      medicine_taken,
+      medicine_total,
+      amount,
+      cause,
+      cap_size,
+      medicine_time,
+    } = req.body;
 
-    if (!user_id || !medicine_name || !medicine_taken || !medicine_total || !amount || !cause || !cap_size || !medicine_time) {
+    if (
+      !user_id ||
+      !medicine_name ||
+      !medicine_taken ||
+      !medicine_total ||
+      !amount ||
+      !cause ||
+      !cap_size ||
+      !medicine_time
+    ) {
       return res.status(400).json({
         status: 400,
         message: "Please provide all required fields.",
-      })
+      });
     }
 
     const newReminder = await prisma.reminders.create({
@@ -25,73 +43,81 @@ export const createReminder = async (req, res, next) => {
         cap_size,
         medicine_time,
       },
-    })
+    });
 
-    res.status(201).json({ success: true, data: newReminder })
+    res.status(201).json({ success: true, data: newReminder });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 // Get all reminders
 export const getAllReminders = async (req, res, next) => {
   try {
-    const data = verifyToken(req.headers.access_token)
-    if (data?.status) return res.status(data.status).json(data)
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
 
     const reminders = await prisma.reminders.findMany({
       include: {
-        user: true,
         schedules: true,
       },
-    })
+      where: { user_id: data.id },
+    });
 
-    res.json({ success: true, data: reminders })
+    res.json({ success: true, data: reminders });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 // Get reminder by ID
 export const getReminderById = async (req, res, next) => {
   try {
-    const data = verifyToken(req.headers.access_token)
-    if (data?.status) return res.status(data.status).json(data)
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
 
-    const reminderId = parseInt(req.params.id)
+    const reminderId = parseInt(req.params.id);
 
     const reminder = await prisma.reminders.findUnique({
-      where: { id: reminderId },
+      where: { id: reminderId, user_id: data.id },
       include: {
-        user: true,
         schedules: true,
       },
-    })
+    });
 
     if (!reminder) {
       return res.status(404).json({
         status: 404,
         message: "Reminder not found.",
-      })
+      });
     }
 
-    res.json({ success: true, data: reminder })
+    res.json({ success: true, data: reminder });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 // Update reminder by ID
 export const updateReminder = async (req, res, next) => {
   try {
-    const data = verifyToken(req.headers.access_token)
-    if (data?.status) return res.status(data.status).json(data)
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
 
-    const reminderId = parseInt(req.params.id)
-    const { user_id, medicine_name, medicine_taken, medicine_total, amount, cause, cap_size, medicine_time } = req.body
+    const reminderId = parseInt(req.params.id);
+    const {
+      user_id,
+      medicine_name,
+      medicine_taken,
+      medicine_total,
+      amount,
+      cause,
+      cap_size,
+      medicine_time,
+    } = req.body;
 
     const updatedReminder = await prisma.reminders.update({
-      where: { id: reminderId },
+      where: { id: reminderId, user_id: data.id },
       data: {
         user_id,
         medicine_name,
@@ -103,16 +129,15 @@ export const updateReminder = async (req, res, next) => {
         medicine_time,
       },
       include: {
-        user: true,
         schedules: true,
       },
-    })
+    });
 
-    res.json({ success: true, data: updatedReminder })
+    res.json({ success: true, data: updatedReminder });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 // Accept reminder by ID
 export const acceptReminder = async (req, res, next) => {
@@ -123,11 +148,13 @@ export const acceptReminder = async (req, res, next) => {
     const reminderId = parseInt(req.params.id);
 
     const currentReminder = await prisma.reminders.findUnique({
-      where: { id: reminderId },
+      where: { id: reminderId, user_id: data.id },
     });
 
     if (!currentReminder) {
-      return res.status(404).json({ success: false, message: 'Reminder not found' });
+      return res
+        .status(404)
+        .json({ success: false, message: "Reminder not found" });
     }
 
     const newMedicineTaken = currentReminder.medicine_taken + 1;
@@ -139,32 +166,38 @@ export const acceptReminder = async (req, res, next) => {
         updated_at: new Date(),
       },
       include: {
-        user: true,
         schedules: true,
       },
     });
 
-    res.json({ success: true, data: updatedReminder });
+    const createSchedules = await prisma.schedules.create({
+      data: {
+        reminder_id: reminderId,
+        status: 0,
+        time: new Date(),
+      },
+    });
+
+    res.json({ success: true, data: { updatedReminder, createSchedules } });
   } catch (error) {
     next(error);
   }
 };
 
-
 // Delete reminder by ID
 export const deleteReminder = async (req, res, next) => {
   try {
-    const data = verifyToken(req.headers.access_token)
-    if (data?.status) return res.status(data.status).json(data)
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
 
-    const reminderId = parseInt(req.params.id)
+    const reminderId = parseInt(req.params.id);
 
     const deletedReminder = await prisma.reminders.delete({
-      where: { id: reminderId },
-    })
+      where: { id: reminderId, user_id: data.id },
+    });
 
-    res.json({ success: true, data: deletedReminder })
+    res.json({ success: true, data: { deletedReminder } });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
