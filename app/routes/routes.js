@@ -145,6 +145,11 @@ routes.get(
   tokenValidation(),
   reminderController.getReminderById
 );
+routes.get(
+  "/reminderLowerMedicine",
+  tokenValidation(),
+  reminderController.getLowerReminderMedicine
+);
 routes.post("/reminder", reminderController.createReminder);
 routes.post(
   "/accept_reminder/:id",
@@ -208,9 +213,6 @@ routes.get(
 );
 
 // admin
-routes.post(
-  "/admin/signin",
-  authController.signInAdmin
-);
+routes.post("/admin/signin", authController.signInAdmin);
 
 export default routes;

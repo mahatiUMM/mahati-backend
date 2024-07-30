@@ -14,6 +14,7 @@ export const createReminder = async (req, res, next) => {
       cause,
       cap_size,
       medicine_time,
+      expired_at,
     } = req.body;
 
     if (
@@ -24,7 +25,8 @@ export const createReminder = async (req, res, next) => {
       !amount ||
       !cause ||
       !cap_size ||
-      !medicine_time
+      !medicine_time ||
+      !expired_at
     ) {
       return res.status(400).json({
         status: 400,
@@ -32,6 +34,7 @@ export const createReminder = async (req, res, next) => {
       });
     }
 
+    const expiredDate = new Date(expired_at);
     const newReminder = await prisma.reminders.create({
       data: {
         user_id,
@@ -42,6 +45,7 @@ export const createReminder = async (req, res, next) => {
         cause,
         cap_size,
         medicine_time,
+        expired_at: expiredDate.toISOString(),
       },
     });
 
@@ -80,6 +84,37 @@ export const getReminderById = async (req, res, next) => {
 
     const reminder = await prisma.reminders.findUnique({
       where: { id: reminderId, user_id: data.id },
+      include: {
+        schedules: true,
+      },
+    });
+
+    if (!reminder) {
+      return res.status(404).json({
+        status: 404,
+        message: "Reminder not found.",
+      });
+    }
+
+    res.json({ success: true, data: reminder });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get LowerReminderMedicine
+export const getLowerReminderMedicine = async (req, res, next) => {
+  try {
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
+
+    const reminder = await prisma.reminders.findMany({
+      where: {
+        medicine_total: {
+          lte: 3,
+        },
+        user_id: data.id,
+      },
       include: {
         schedules: true,
       },
@@ -146,6 +181,7 @@ export const acceptReminder = async (req, res, next) => {
     if (data?.status) return res.status(data.status).json(data);
 
     const reminderId = parseInt(req.params.id);
+    const date = new Date();
 
     const currentReminder = await prisma.reminders.findUnique({
       where: { id: reminderId, user_id: data.id },
@@ -163,7 +199,7 @@ export const acceptReminder = async (req, res, next) => {
       data: {
         medicine_taken: newMedicineTaken,
         medicine_total: currentReminder.amount - newMedicineTaken,
-        updated_at: new Date(),
+        updated_at: date,
       },
       include: {
         schedules: true,
@@ -174,7 +210,7 @@ export const acceptReminder = async (req, res, next) => {
       data: {
         reminder_id: reminderId,
         status: 0,
-        time: new Date(),
+        time: date,
       },
     });
 
