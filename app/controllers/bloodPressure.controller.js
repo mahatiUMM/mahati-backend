@@ -48,7 +48,7 @@ export const getBloodPressureById = async (req, res, next) => {
     const bloodPressureId = parseInt(req.params.id);
 
     const bloodPressure = await prisma.blood_pressures.findUnique({
-      where: { id: bloodPressureId },
+      where: { id: bloodPressureId, user_id: data.id },
     });
 
     if (!bloodPressure) {
@@ -74,7 +74,7 @@ export const updateBloodPressure = async (req, res, next) => {
     const { user_id, image, sistol, diastole, heartbeat } = req.body;
 
     const updatedBloodPressure = await prisma.blood_pressures.update({
-      where: { id: bloodPressureId },
+      where: { id: bloodPressureId, user_id: data.id },
       data: {
         user_id,
         image,
@@ -99,7 +99,7 @@ export const deleteBloodPressure = async (req, res, next) => {
     const bloodPressureId = parseInt(req.params.id);
 
     const deletedBloodPressure = await prisma.blood_pressures.delete({
-      where: { id: bloodPressureId },
+      where: { id: bloodPressureId, user_id: data.id },
     });
 
     res.json({ success: true, data: deletedBloodPressure });
