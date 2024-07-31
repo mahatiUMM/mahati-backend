@@ -5,10 +5,11 @@ import { verifyToken } from "../lib/tokenHandler.js"
 // Create brochure
 export const createBrochure = async (req, res, next) => {
   try {
-    const { image } = req.body
+    const { title, image } = req.body
 
     const newBrochure = await prisma.brochures.create({
       data: {
+        title,
         image,
       },
     })
@@ -65,12 +66,14 @@ export const updateBrochure = async (req, res, next) => {
     if (data?.status) return res.status(data.status).json(data)
 
     const brochureId = parseInt(req.params.id)
-    const { image } = req.body
+    const { title, image } = req.body
 
     const updatedBrochure = await prisma.brochures.update({
       where: { id: brochureId },
       data: {
+        title,
         image,
+        updated_at: new Date(),
       },
     })
 
