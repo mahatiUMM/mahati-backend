@@ -55,7 +55,36 @@ export const createReminder = async (req, res, next) => {
   }
 };
 
-// Get all reminders
+// Get all reminders (admin)
+export const getAllRemindersAdmin = async (req, res, next) => {
+  try {
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
+
+    const user = await prisma.users.findUnique({
+      where: { id: data.id },
+    })
+
+    if (!user.isAdmin) {
+      return res.status(403).json({
+        status: 403,
+        message: "You are not authorized to access this route.",
+      });
+    }
+
+    const reminders = await prisma.reminders.findMany({
+      include: {
+        schedules: true,
+      },
+    });
+
+    res.json({ success: true, data: reminders })
+  } catch (error) {
+    next(error);
+  }
+}
+
+// Get all reminders (user)
 export const getAllReminders = async (req, res, next) => {
   try {
     const data = verifyToken(req.headers.access_token);

@@ -147,6 +147,9 @@ routes.delete(
   questionnaireQuestionController.deleteQuestionnaireQuestion
 );
 
+// reminder admin
+routes.get("/admin/reminders", tokenValidation(), reminderController.getAllRemindersAdmin);
+
 // reminder
 routes.get("/reminder", tokenValidation(), reminderController.getAllReminders);
 routes.get(
