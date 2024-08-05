@@ -162,11 +162,15 @@ model refresh_tokens {
 
 // Define the model for the 'videos' table
 model videos {
-  id         Int       @id @default(autoincrement())
-  link       String
-  user_id    Int
-  created_at DateTime  @default(now())
-  updated_at DateTime?
+  id            Int       @id @default(autoincrement())
+  link          String
+  user_id       Int
+  title         String
+  author_name   String
+  author_url    String
+  thumbnail_url String
+  created_at    DateTime  @default(now())
+  updated_at    DateTime?
 
   // Set foreign key relationship with the 'users' table
   user      users       @relation(fields: [user_id], references: [id])

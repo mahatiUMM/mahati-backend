@@ -19,10 +19,19 @@ export const createVideo = async (req, res, next) => {
       })
     }
 
+    const youtubeOembed = "https://www.youtube.com/oembed?url="
+
+    const response = await fetch(`${youtubeOembed}${link}&format=json`)
+    const data = await response.json();
+
     const newVideo = await prisma.videos.create({
       data: {
         link,
         user_id,
+        title: data.title,
+        author_name: data.author_name,
+        author_url: data.author_url,
+        thumbnail_url: data.thumbnail_url
       },
     })
 
