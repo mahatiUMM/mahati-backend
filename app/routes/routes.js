@@ -147,9 +147,6 @@ routes.delete(
   questionnaireQuestionController.deleteQuestionnaireQuestion
 );
 
-// reminder admin
-routes.get("/admin/reminders", tokenValidation(), reminderController.getAllRemindersAdmin);
-
 // reminder
 routes.get("/reminder", tokenValidation(), reminderController.getAllReminders);
 routes.get(
@@ -221,5 +218,7 @@ routes.get(
 
 // admin
 routes.post("/admin/signin", authController.signInAdmin);
+routes.get("/admin/reminders", tokenValidation(), reminderController.getAllRemindersAdmin);
+routes.get("/admin/users", tokenValidation(), userDashboardController.getAllUsers);
 
 export default routes;

@@ -7,6 +7,18 @@ export const createVideo = async (req, res, next) => {
   try {
     const { link, user_id } = req.body
 
+    if (!link || !user_id) {
+      return res.status(400).json({
+        status: 400,
+        message: "Please provide link and user_id.",
+      })
+    } else if (typeof user_id !== "number") {
+      return res.status(400).json({
+        status: 400,
+        message: "user_id must be a number.",
+      })
+    }
+
     const newVideo = await prisma.videos.create({
       data: {
         link,
@@ -26,12 +38,7 @@ export const getAllVideos = async (req, res, next) => {
     const data = verifyToken(req.headers.access_token)
     if (data?.status) return res.status(data.status).json(data)
 
-    const videos = await prisma.videos.findMany({
-      include: {
-        user: true,
-        bookmarks: true,
-      },
-    })
+    const videos = await prisma.videos.findMany();
 
     res.json({ success: true, data: videos })
   } catch (error) {
@@ -49,10 +56,6 @@ export const getVideoById = async (req, res, next) => {
 
     const video = await prisma.videos.findUnique({
       where: { id: videoId },
-      include: {
-        user: true,
-        bookmarks: true,
-      },
     })
 
     if (!video) {

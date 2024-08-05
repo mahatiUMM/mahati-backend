@@ -1,5 +1,4 @@
 import { prisma } from "../lib/dbConnect.js"
-export * as bookmarkController from "./bookmark.controller.js"
 import { verifyToken } from "../lib/tokenHandler.js"
 
 // Create bookmark record
@@ -27,9 +26,19 @@ export const getAllBookmarks = async (req, res, next) => {
     const data = verifyToken(req.headers.access_token)
     if (data?.status) return res.status(data.status).json(data)
 
-    const bookmarks = await prisma.bookmarks.findMany()
+    const user = await prisma.users.findUnique({
+      where: { id: data.id },
+    })
 
-    res.json({ success: true, data: bookmarks })
+    if (user.isAdmin) {
+      const bookmarksAdmin = await prisma.bookmarks.findMany()
+      return res.json({ success: true, data: bookmarksAdmin })
+    } else {
+      const bookmarks = await prisma.bookmarks.findMany({
+        where: { user_id: data.id },
+      })
+      return res.json({ success: true, data: bookmarks })
+    }
   } catch (error) {
     next(error)
   }
@@ -101,3 +110,5 @@ export const deleteBookmark = async (req, res, next) => {
     next(error)
   }
 }
+
+export * as bookmarkController from "./bookmark.controller.js";
