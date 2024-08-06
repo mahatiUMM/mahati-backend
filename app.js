@@ -8,7 +8,13 @@ const host = process.env.HOST;
 
 const corsOptions = {
   origin: "*",
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+    "Accept",
+    "Origin",
+  ],
 };
 
 app.use(express.json());
@@ -16,9 +22,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 
 app.get("/", function (req, res) {
-  res.send(`<h2 style="display: flex; justify-content: center; align-items: center;">Mahati Backend</h2>`);
+  res.send(
+    `<h2 style="display: flex; justify-content: center; align-items: center;">Mahati Backend</h2>`
+  );
 });
 
+app.use("/storage/uploads", express.static("./storage/uploads/"));
 app.use("/api", routes);
 
 app.listen(port, () => {

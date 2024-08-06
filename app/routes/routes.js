@@ -11,6 +11,7 @@ import { scheduleController } from "../controllers/schedule.controller.js";
 import { videoController } from "../controllers/video.controller.js";
 import { exportController } from "../controllers/export.controller.js";
 import { userDashboardController } from "../controllers/userDashboard.controller.js";
+import { imageUploader } from "../lib/multerStorage.js";
 
 const routes = Router({ strict: true });
 
@@ -82,7 +83,11 @@ routes.get(
   tokenValidation(),
   brochureController.getBrochureById
 );
-routes.post("/brochure", brochureController.createBrochure);
+routes.post(
+  "/brochure",
+  imageUploader.array("images", 10),
+  brochureController.createBrochure
+);
 routes.put(
   "/brochure/:id",
   tokenValidation(),
@@ -218,7 +223,15 @@ routes.get(
 
 // admin
 routes.post("/admin/signin", authController.signInAdmin);
-routes.get("/admin/reminders", tokenValidation(), reminderController.getAllRemindersAdmin);
-routes.get("/admin/users", tokenValidation(), userDashboardController.getAllUsers);
+routes.get(
+  "/admin/reminders",
+  tokenValidation(),
+  reminderController.getAllRemindersAdmin
+);
+routes.get(
+  "/admin/users",
+  tokenValidation(),
+  userDashboardController.getAllUsers
+);
 
 export default routes;

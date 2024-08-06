@@ -40,9 +40,16 @@ model bookmarks {
 model brochures {
   id         Int       @id @default(autoincrement())
   title      String
-  image      String
+  images     brochureimage[]
   created_at DateTime  @default(now())
   updated_at DateTime?
+}
+
+model brochureimage {
+  id         Int      @id @default(autoincrement())
+  imagePath  String
+  brochureId Int
+  brochure   brochures @relation(fields: [brochureId], references: [id])
 }
 
 // Define the model for the 'questionnaires' table
