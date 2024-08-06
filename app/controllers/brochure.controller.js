@@ -121,9 +121,16 @@ export const deleteBrochure = async (req, res, next) => {
     };
 
     if (brochure.images.length > 0) {
-      brochure.images.forEach((image) => {
-        removeFile(image.imagePath);
-      });
+      try {
+        brochure.images.forEach((image) => {
+          removeFile(image.imagePath);
+        });
+      } catch (error) {
+        return res.status(500).json({
+          status: 500,
+          message: "Failed to delete brochure images.",
+        });
+      }
     };
 
     const deletedBrochure = await prisma.brochures.delete({
