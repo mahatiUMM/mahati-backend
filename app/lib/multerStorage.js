@@ -1,6 +1,10 @@
 import multer from "multer";
 import crypto from "crypto";
 import path from "path";
+import { promisify } from 'util';
+import fs from 'fs';
+
+export const removeFile = promisify(fs.unlink);
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

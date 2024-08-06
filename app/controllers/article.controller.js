@@ -1,5 +1,6 @@
 import { prisma } from "../lib/dbConnect.js";
 import { verifyToken } from "../lib/tokenHandler.js";
+import { removeFile } from "../lib/multerStorage.js";
 
 // Create article
 export const createArticle = async (req, res, next) => {
@@ -97,6 +98,26 @@ export const deleteArticle = async (req, res, next) => {
     if (data?.status) return res.status(data.status).json(data);
 
     const articleId = parseInt(req.params.id);
+
+    const article = await prisma.articles.findUnique({
+      where: { id: articleId },
+    });
+
+    if (!article) {
+      return res.status(404).json({
+        status: 404,
+        message: "Article not found.",
+      });
+    }
+
+    if (article.file) {
+      try {
+        await removeFile(article.file);
+      } catch (err) {
+        console.error(`Failed to delete file: ${article.file}`, err);
+      }
+    }
+
 
     const deletedArticle = await prisma.articles.delete({
       where: { id: articleId },
