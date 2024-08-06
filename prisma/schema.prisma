@@ -38,15 +38,15 @@ model bookmarks {
 
 // Define the model for the 'brochures' table
 model brochures {
-  id         Int       @id @default(autoincrement())
+  id         Int             @id @default(autoincrement())
   title      String
   images     brochureimage[]
-  created_at DateTime  @default(now())
+  created_at DateTime        @default(now())
   updated_at DateTime?
 }
 
 model brochureimage {
-  id         Int      @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   imagePath  String
   brochureId Int
   brochure   brochures @relation(fields: [brochureId], references: [id])
@@ -182,4 +182,13 @@ model videos {
   // Set foreign key relationship with the 'users' table
   user      users       @relation(fields: [user_id], references: [id])
   bookmarks bookmarks[]
+}
+
+model articles {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  file        String
+  created_at  DateTime  @default(now())
+  updated_at  DateTime?
 }

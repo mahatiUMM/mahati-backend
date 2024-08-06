@@ -10,8 +10,9 @@ import { reminderController } from "../controllers/reminder.controller.js";
 import { scheduleController } from "../controllers/schedule.controller.js";
 import { videoController } from "../controllers/video.controller.js";
 import { exportController } from "../controllers/export.controller.js";
+import { articleController } from "../controllers/article.controller.js";
 import { userDashboardController } from "../controllers/userDashboard.controller.js";
-import { imageUploader } from "../lib/multerStorage.js";
+import { imageUploader, pdfUploader } from "../lib/multerStorage.js";
 
 const routes = Router({ strict: true });
 
@@ -219,6 +220,37 @@ routes.get(
   "/export/video",
   tokenValidation(),
   exportController.exportAllVideos
+);
+
+// article
+routes.get(
+  "/article",
+  tokenValidation(),
+  articleController.getAllArticles
+);
+
+routes.get(
+  "/article/:id",
+  tokenValidation(),
+  articleController.getArticleById
+);
+
+routes.post(
+  "/article",
+  pdfUploader.single("file"),
+  articleController.createArticle
+);
+
+routes.put(
+  "/article/:id",
+  tokenValidation(),
+  articleController.updateArticle
+);
+
+routes.delete(
+  "/article/:id",
+  tokenValidation(),
+  articleController.deleteArticle
 );
 
 // admin

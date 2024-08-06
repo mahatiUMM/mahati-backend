@@ -25,6 +25,15 @@ const filter = (req, file, cb) => {
   }
 };
 
+const filterPdf = (req, file, cb) => {
+  const allowedMimes = ["application/pdf"];
+  if (allowedMimes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error("Invalid file type. Only PDF files are allowed."));
+  }
+}
+
 /**
  * The `imageUploader` function is a Multer middleware that handles file uploads.
  * @returns a Multer middleware.
@@ -35,4 +44,17 @@ export const imageUploader = multer({
     fileSize: 1024 * 1024 * 5,
   },
   fileFilter: filter,
+});
+
+/**
+ * The `pdfUploader` function is a Multer middleware that handles PDF file uploads.
+ * @returns a Multer middleware.
+ */
+
+export const pdfUploader = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 5,
+  },
+  fileFilter: filterPdf,
 });
