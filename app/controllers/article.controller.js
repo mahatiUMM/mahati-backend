@@ -108,7 +108,7 @@ export const deleteArticle = async (req, res, next) => {
         status: 404,
         message: "Article not found.",
       });
-    }
+    };
 
     if (article.file) {
       try {
@@ -116,7 +116,7 @@ export const deleteArticle = async (req, res, next) => {
       } catch (err) {
         console.error(`Failed to delete file: ${article.file}`, err);
       }
-    }
+    };
 
 
     const deletedArticle = await prisma.articles.delete({

@@ -1,6 +1,7 @@
 import { prisma } from "../lib/dbConnect.js";
 export * as brochureController from "./brochure.controller.js";
 import { verifyToken } from "../lib/tokenHandler.js";
+import { removeFile } from "../lib/multerStorage.js";
 
 // Create brochure
 export const createBrochure = async (req, res, next) => {
@@ -104,6 +105,26 @@ export const deleteBrochure = async (req, res, next) => {
     if (data?.status) return res.status(data.status).json(data);
 
     const brochureId = parseInt(req.params.id);
+
+    const brochure = await prisma.brochures.findUnique({
+      where: { id: brochureId },
+      include: {
+        images: true,
+      },
+    })
+
+    if (!brochure) {
+      return res.status(404).json({
+        status: 404,
+        message: "Brochure not found.",
+      })
+    };
+
+    if (brochure.images.length > 0) {
+      brochure.images.forEach((image) => {
+        removeFile(image.imagePath);
+      });
+    };
 
     const deletedBrochure = await prisma.brochures.delete({
       where: { id: brochureId },
