@@ -265,5 +265,10 @@ routes.get(
   tokenValidation(),
   userDashboardController.getAllUsers
 );
+routes.get(
+  "/admin/blood_pressure",
+  tokenValidation(),
+  bloodPressureController.getAllBloodPressuresAdmin
+)
 
 export default routes;
