@@ -70,6 +70,42 @@ export const getAllVideos = async (req, res, next) => {
   }
 };
 
+// Get all videos
+export const getAllBookmarkedVideos = async (req, res, next) => {
+  try {
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
+
+    const bookmarks = await prisma.bookmarks.findMany({
+      where: {
+        user_id: data.id,
+      },
+      select: {
+        video_id: true,
+      },
+    });
+
+    const bookmarkedVideoIds = bookmarks.map((bookmark) => bookmark.video_id);
+    const bookmarkedVideos = await prisma.videos.findMany({
+      where: {
+        id: {
+          in: bookmarkedVideoIds,
+        },
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      data: bookmarkedVideos.map((video) => ({
+        ...video,
+        is_bookmarked: true,
+      })),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Get video by ID
 export const getVideoById = async (req, res, next) => {
   try {
