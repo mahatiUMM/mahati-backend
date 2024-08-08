@@ -4,6 +4,8 @@ import { verifyToken } from "../lib/tokenHandler.js";
 export const getUserDashboard = async (req, res, next) => {
   try {
     const data = verifyToken(req.headers.access_token);
+    const currentDate = new Date();
+
     if (data?.status) return res.status(data.status).json(data);
 
     const recent_blood_pressure = await prisma.blood_pressures.findFirst({
@@ -20,9 +22,34 @@ export const getUserDashboard = async (req, res, next) => {
       },
     });
 
+    const reminders = await prisma.reminders.findMany({
+      include: {
+        schedules: true,
+      },
+      where: {
+        user_id: data.id,
+      },
+    });
+
+    const filteredReminders = reminders.filter((reminder) =>
+      reminder.schedules.some((schedule) => {
+        const scheduleDate = new Date(schedule.time);
+
+        return (
+          scheduleDate.getFullYear() === currentDate.getFullYear() &&
+          scheduleDate.getMonth() === currentDate.getMonth() &&
+          scheduleDate.getDate() === currentDate.getDate()
+        );
+      })
+    );
+
     res.json({
       success: true,
-      data: { lower_medicine, recent_blood_pressure },
+      data: {
+        remaining_reminder: reminders.length - filteredReminders.length,
+        lower_medicine,
+        recent_blood_pressure,
+      },
     });
   } catch (error) {
     next(error);
@@ -36,7 +63,7 @@ export const getAllUsers = async (req, res, next) => {
 
     const user = await prisma.users.findUnique({
       where: { id: data.id },
-    })
+    });
 
     if (!user.isAdmin) {
       return res.status(403).json({
@@ -47,10 +74,10 @@ export const getAllUsers = async (req, res, next) => {
 
     const users = await prisma.users.findMany();
 
-    res.json({ success: true, data: users })
+    res.json({ success: true, data: users });
   } catch (error) {
     next(error);
   }
-}
+};
 
 export * as userDashboardController from "./userDashboard.controller.js";

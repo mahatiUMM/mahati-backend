@@ -1,8 +1,8 @@
 import multer from "multer";
 import crypto from "crypto";
 import path from "path";
-import { promisify } from 'util';
-import fs from 'fs';
+import { promisify } from "util";
+import fs from "fs";
 
 export const removeFile = promisify(fs.unlink);
 
@@ -21,11 +21,15 @@ const storage = multer.diskStorage({
 });
 
 const filter = (req, file, cb) => {
-  const allowedMimes = ["image/jpeg", "image/png"];
+  const allowedMimes = ["image/jpeg", "image/png", "image/jpg"];
   if (allowedMimes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error("Invalid file type. Only JPEG and PNG files are allowed."));
+    cb(
+      new Error(
+        `Permitted ${file.mimetype}. Only JPEG and PNG files are allowed.`
+      )
+    );
   }
 };
 
@@ -36,7 +40,7 @@ const filterPdf = (req, file, cb) => {
   } else {
     cb(new Error("Invalid file type. Only PDF files are allowed."));
   }
-}
+};
 
 /**
  * The `imageUploader` function is a Multer middleware that handles file uploads.

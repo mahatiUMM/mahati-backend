@@ -5,15 +5,24 @@ import { verifyToken } from "../lib/tokenHandler.js";
 // Create blood pressure record
 export const createBloodPressure = async (req, res, next) => {
   try {
-    const { user_id, image, sistol, diastole, heartbeat } = req.body;
+    const { sistol, diastole, heartbeat } = req.body;
+
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
+
+    if (!req.file) {
+      return res.status(400).json({ message: "Please upload an image file." });
+    }
+
+    const image = req.file ? req.file.path : "";
 
     const newBloodPressure = await prisma.blood_pressures.create({
       data: {
-        user_id,
+        user_id: data.id,
         image,
-        sistol,
-        diastole,
-        heartbeat,
+        sistol: parseInt(sistol),
+        diastole: parseInt(diastole),
+        heartbeat: parseInt(heartbeat),
       },
     });
 
@@ -131,7 +140,7 @@ export const getAllBloodPressuresAdmin = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}
+};
 
 // Get blood pressure record by ID for admin
 export const getBloodPressureByIdAdmin = async (req, res, next) => {

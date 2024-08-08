@@ -46,7 +46,12 @@ routes.get(
   tokenValidation(),
   bloodPressureController.getBloodPressureById
 );
-routes.post("/blood_pressure", bloodPressureController.createBloodPressure);
+routes.post(
+  "/blood_pressure",
+  tokenValidation(),
+  imageUploader.single("image"),
+  bloodPressureController.createBloodPressure
+);
 routes.put(
   "/blood_pressure/:id",
   tokenValidation(),
@@ -223,17 +228,9 @@ routes.get(
 );
 
 // article
-routes.get(
-  "/article",
-  tokenValidation(),
-  articleController.getAllArticles
-);
+routes.get("/article", tokenValidation(), articleController.getAllArticles);
 
-routes.get(
-  "/article/:id",
-  tokenValidation(),
-  articleController.getArticleById
-);
+routes.get("/article/:id", tokenValidation(), articleController.getArticleById);
 
 routes.post(
   "/article",
@@ -241,11 +238,7 @@ routes.post(
   articleController.createArticle
 );
 
-routes.put(
-  "/article/:id",
-  tokenValidation(),
-  articleController.updateArticle
-);
+routes.put("/article/:id", tokenValidation(), articleController.updateArticle);
 
 routes.delete(
   "/article/:id",
@@ -264,12 +257,12 @@ routes.get(
   "/admin/blood_pressure",
   tokenValidation(),
   bloodPressureController.getAllBloodPressuresAdmin
-)
+);
 routes.get(
   "/admin/blood_pressure/:id",
   tokenValidation(),
   bloodPressureController.getBloodPressureByIdAdmin
-)
+);
 routes.get(
   "/admin/reminders",
   tokenValidation(),
