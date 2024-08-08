@@ -117,6 +117,43 @@ export const deleteBloodPressure = async (req, res, next) => {
   }
 };
 
+// Create blood pressure record for admin
+export const createBloodPressureAdmin = async (req, res, next) => {
+  try {
+    const { user_id, sistol, diastole, heartbeat } = req.body;
+
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
+
+    const image = req.file ? req.file.path : "";
+
+    const user = await prisma.users.findUnique({
+      where: { id: data.id },
+    });
+
+    if (!user.isAdmin) {
+      return res.status(403).json({
+        status: 403,
+        message: "You are not authorized to access this route.",
+      });
+    }
+
+    const newBloodPressure = await prisma.blood_pressures.create({
+      data: {
+        user_id: parseInt(user_id),
+        image,
+        sistol: parseInt(sistol),
+        diastole: parseInt(diastole),
+        heartbeat: parseInt(heartbeat),
+      },
+    });
+
+    res.status(201).json({ success: true, data: newBloodPressure });
+  } catch (error) {
+    next(error);
+  }
+}
+
 // Get all blood pressure records for admin
 export const getAllBloodPressuresAdmin = async (req, res, next) => {
   try {

@@ -243,6 +243,12 @@ routes.get(
   tokenValidation(),
   userDashboardController.getAllUsers
 );
+routes.post(
+  "/admin/blood_pressure",
+  tokenValidation(),
+  imageUploader.single("image"),
+  bloodPressureController.createBloodPressureAdmin
+)
 routes.get(
   "/admin/blood_pressure",
   tokenValidation(),
