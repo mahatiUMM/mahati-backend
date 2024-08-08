@@ -63,7 +63,7 @@ export const getAllRemindersAdmin = async (req, res, next) => {
 
     const user = await prisma.users.findUnique({
       where: { id: data.id },
-    })
+    });
 
     if (!user.isAdmin) {
       return res.status(403).json({
@@ -78,11 +78,11 @@ export const getAllRemindersAdmin = async (req, res, next) => {
       },
     });
 
-    res.json({ success: true, data: reminders })
+    res.json({ success: true, data: reminders });
   } catch (error) {
     next(error);
   }
-}
+};
 
 // Get all reminders (user)
 export const getAllReminders = async (req, res, next) => {
@@ -192,6 +192,16 @@ export const acceptReminder = async (req, res, next) => {
     }
 
     const newMedicineTaken = currentReminder.medicine_taken + 1;
+
+    if (currentReminder.amount - newMedicineTaken <= 0) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: `Obat Habis, mohon isi ulang obat ${currentReminder.medicine_name}`,
+        });
+    }
+
     const updatedReminder = await prisma.reminders.update({
       where: { id: reminderId },
       data: {
