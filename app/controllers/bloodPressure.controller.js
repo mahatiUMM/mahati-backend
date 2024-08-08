@@ -132,3 +132,39 @@ export const getAllBloodPressuresAdmin = async (req, res, next) => {
     next(error);
   }
 }
+
+// Get blood pressure record by ID for admin
+export const getBloodPressureByIdAdmin = async (req, res, next) => {
+  try {
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
+
+    const user = await prisma.users.findUnique({
+      where: { id: data.id },
+    });
+
+    if (!user.isAdmin) {
+      return res.status(403).json({
+        status: 403,
+        message: "You are not authorized to access this route.",
+      });
+    }
+
+    const bloodPressureId = parseInt(req.params.id);
+
+    const bloodPressure = await prisma.blood_pressures.findUnique({
+      where: { id: bloodPressureId },
+    });
+
+    if (!bloodPressure) {
+      return res.status(404).json({
+        status: 404,
+        message: "Blood pressure record not found.",
+      });
+    }
+
+    res.json({ success: true, data: bloodPressure });
+  } catch (error) {
+    next(error);
+  }
+};

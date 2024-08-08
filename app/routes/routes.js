@@ -256,11 +256,6 @@ routes.delete(
 // admin
 routes.post("/admin/signin", authController.signInAdmin);
 routes.get(
-  "/admin/reminders",
-  tokenValidation(),
-  reminderController.getAllRemindersAdmin
-);
-routes.get(
   "/admin/users",
   tokenValidation(),
   userDashboardController.getAllUsers
@@ -270,5 +265,15 @@ routes.get(
   tokenValidation(),
   bloodPressureController.getAllBloodPressuresAdmin
 )
+routes.get(
+  "/admin/blood_pressure/:id",
+  tokenValidation(),
+  bloodPressureController.getBloodPressureByIdAdmin
+)
+routes.get(
+  "/admin/reminders",
+  tokenValidation(),
+  reminderController.getAllRemindersAdmin
+);
 
 export default routes;
