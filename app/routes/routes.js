@@ -193,6 +193,11 @@ routes.delete(
 
 //video
 routes.get("/video", tokenValidation(), videoController.getAllVideos);
+routes.get(
+  "/video_bookmarked",
+  tokenValidation(),
+  videoController.getAllBookmarkedVideos
+);
 routes.get("/video/:id", tokenValidation(), videoController.getVideoById);
 routes.post("/video", videoController.createVideo);
 routes.put("/video/:id", tokenValidation(), videoController.updateVideo);
@@ -248,7 +253,7 @@ routes.post(
   tokenValidation(),
   imageUploader.single("image"),
   bloodPressureController.createBloodPressureAdmin
-)
+);
 routes.get(
   "/admin/blood_pressure",
   tokenValidation(),
