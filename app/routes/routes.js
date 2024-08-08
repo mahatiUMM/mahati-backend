@@ -259,6 +259,17 @@ routes.get(
   tokenValidation(),
   bloodPressureController.getBloodPressureByIdAdmin
 );
+routes.put(
+  "/admin/blood_pressure/:id",
+  tokenValidation(),
+  imageUploader.single("image"),
+  bloodPressureController.updateBloodPressureAdmin
+);
+routes.delete(
+  "/admin/blood_pressure/:id",
+  tokenValidation(),
+  bloodPressureController.deleteBloodPressureAdmin
+)
 routes.get(
   "/admin/reminders",
   tokenValidation(),

@@ -214,3 +214,70 @@ export const getBloodPressureByIdAdmin = async (req, res, next) => {
     next(error);
   }
 };
+
+// Update blood pressure record by ID for admin
+export const updateBloodPressureAdmin = async (req, res, next) => {
+  try {
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
+
+    const { user_id, sistol, diastole, heartbeat } = req.body;
+    const image = req.file ? req.file.path : "";
+    const bloodPressureId = parseInt(req.params.id);
+
+    const user = await prisma.users.findUnique({
+      where: { id: data.id },
+    });
+
+    if (!user.isAdmin) {
+      return res.status(403).json({
+        status: 403,
+        message: "You are not authorized to access this route.",
+      });
+    }
+
+    const updatedBloodPressure = await prisma.blood_pressures.update({
+      where: { id: bloodPressureId },
+      data: {
+        user_id: parseInt(user_id),
+        image,
+        sistol: parseInt(sistol),
+        diastole: parseInt(diastole),
+        heartbeat: parseInt(heartbeat),
+      },
+    });
+
+    res.json({ success: true, data: updatedBloodPressure });
+  } catch (error) {
+    next(error);
+  }
+}
+
+// Delete blood pressure record by ID for admin
+export const deleteBloodPressureAdmin = async (req, res, next) => {
+  try {
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
+
+    const bloodPressureId = parseInt(req.params.id);
+
+    const user = await prisma.users.findUnique({
+      where: { id: data.id },
+    });
+
+    if (!user.isAdmin) {
+      return res.status(403).json({
+        status: 403,
+        message: "You are not authorized to access this route.",
+      });
+    }
+
+    const deletedBloodPressure = await prisma.blood_pressures.delete({
+      where: { id: bloodPressureId },
+    });
+
+    res.json({ success: true, data: deletedBloodPressure });
+  } catch (error) {
+    next(error);
+  }
+}
