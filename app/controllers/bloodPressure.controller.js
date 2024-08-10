@@ -3,7 +3,6 @@ export * as bloodPressureController from "./bloodPressure.controller.js";
 import { getPaginationMeta, getPaginationParams } from "../lib/pagination.js";
 import { verifyToken } from "../lib/tokenHandler.js";
 
-// Create blood pressure record
 export const createBloodPressure = async (req, res, next) => {
   try {
     const { sistol, diastole, heartbeat } = req.body;
@@ -23,7 +22,6 @@ export const createBloodPressure = async (req, res, next) => {
 
     if (user.isAdmin) {
       const { user_id } = req.body;
-
       const newBloodPressure = await prisma.blood_pressures.create({
         data: {
           user_id: parseInt(user_id),
@@ -51,7 +49,6 @@ export const createBloodPressure = async (req, res, next) => {
   }
 };
 
-// Get all blood pressure records
 export const getAllBloodPressures = async (req, res, next) => {
   try {
     const data = verifyToken(req.headers.access_token);
@@ -95,7 +92,6 @@ export const getAllBloodPressures = async (req, res, next) => {
   }
 };
 
-// Get blood pressure record by ID
 export const getBloodPressureById = async (req, res, next) => {
   try {
     const data = verifyToken(req.headers.access_token);
@@ -136,7 +132,6 @@ export const getBloodPressureById = async (req, res, next) => {
   }
 };
 
-// Update blood pressure record by ID
 export const updateBloodPressure = async (req, res, next) => {
   try {
     const data = verifyToken(req.headers.access_token);
@@ -179,7 +174,6 @@ export const updateBloodPressure = async (req, res, next) => {
   }
 };
 
-// Delete blood pressure record by ID
 export const deleteBloodPressure = async (req, res, next) => {
   try {
     const data = verifyToken(req.headers.access_token);

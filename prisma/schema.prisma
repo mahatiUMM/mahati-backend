@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Define the model for the 'blood_pressures' table
 model blood_pressures {
   id         Int       @id @default(autoincrement())
   user_id    Int
@@ -17,31 +16,30 @@ model blood_pressures {
   heartbeat  Int
   created_at DateTime  @default(now())
   updated_at DateTime?
+  user       users     @relation(fields: [user_id], references: [id])
 
-  // Set foreign key relationship with the 'users' table
-  user users @relation(fields: [user_id], references: [id])
+  @@index([user_id], map: "blood_pressures_user_id_fkey")
 }
 
-// Define the model for the 'bookmarks' table
 model bookmarks {
-  id          Int       @id @default(autoincrement())
-  video_id    Int
-  user_id     Int
-  created_at  DateTime  @default(now())
-  updated_at  DateTime?
+  id         Int       @id @default(autoincrement())
+  video_id   Int
+  user_id    Int
+  created_at DateTime  @default(now())
+  updated_at DateTime?
+  user       users     @relation(fields: [user_id], references: [id])
+  video      videos    @relation(fields: [video_id], references: [id])
 
-  // Set foreign key relationships
-  video videos @relation(fields: [video_id], references: [id])
-  user  users  @relation(fields: [user_id], references: [id])
+  @@index([user_id], map: "bookmarks_user_id_fkey")
+  @@index([video_id], map: "bookmarks_video_id_fkey")
 }
 
-// Define the model for the 'brochures' table
 model brochures {
   id         Int             @id @default(autoincrement())
   title      String
-  images     brochureimage[]
   created_at DateTime        @default(now())
   updated_at DateTime?
+  images     brochureimage[]
 }
 
 model brochureimage {
@@ -49,9 +47,10 @@ model brochureimage {
   imagePath  String
   brochureId Int
   brochure   brochures @relation(fields: [brochureId], references: [id])
+
+  @@index([brochureId], map: "brochureimage_brochureId_fkey")
 }
 
-// Define the model for the 'questionnaires' table
 model questionnaires {
   id                      Int                       @id @default(autoincrement())
   type                    Int
@@ -63,51 +62,48 @@ model questionnaires {
   questionnaire_questions questionnaire_questions[]
 }
 
-// Define the model for the 'questionnaire_answers' table
 model questionnaire_answers {
-  id          Int       @id @default(autoincrement())
+  id          Int                     @id @default(autoincrement())
   question_id Int
   answer      Int
   user_id     Int
-  created_at  DateTime  @default(now())
+  created_at  DateTime                @default(now())
   updated_at  DateTime?
+  question    questionnaire_questions @relation(fields: [question_id], references: [id])
+  user        users                   @relation(fields: [user_id], references: [id])
 
-  // Set foreign key relationships
-  question questionnaire_questions @relation(fields: [question_id], references: [id])
-  user     users                   @relation(fields: [user_id], references: [id])
+  @@index([question_id], map: "questionnaire_answers_question_id_fkey")
+  @@index([user_id], map: "questionnaire_answers_user_id_fkey")
 }
 
-// Define the model for the 'questionnaire_questions' table
 model questionnaire_questions {
-  id                Int                 @id @default(autoincrement())
-  questionnaire_id  Int
-  question          String
-  available_answers available_answers[]
-  created_at        DateTime            @default(now())
-  updated_at        DateTime?
-
-  // Set foreign key relationship with the 'questionnaires' table
-  questionnaire         questionnaires          @relation(fields: [questionnaire_id], references: [id])
+  id                    Int                     @id @default(autoincrement())
+  questionnaire_id      Int
+  question              String
+  created_at            DateTime                @default(now())
+  updated_at            DateTime?
+  available_answers     available_answers[]
   questionnaire_answers questionnaire_answers[]
+  questionnaire         questionnaires          @relation(fields: [questionnaire_id], references: [id])
 
+  @@index([questionnaire_id], map: "questionnaire_questions_questionnaire_id_fkey")
   @@map("questionnaire_questions")
 }
 
 model available_answers {
-  id                      Int       @id @default(autoincrement())
+  id                      Int                     @id @default(autoincrement())
   questionnaireQuestionId Int
   answer_text             String
-  created_at              DateTime  @default(now())
+  created_at              DateTime                @default(now())
   updated_at              DateTime?
+  questionnaireQuestion   questionnaire_questions @relation(fields: [questionnaireQuestionId], references: [id])
 
-  questionnaireQuestion questionnaire_questions @relation(fields: [questionnaireQuestionId], references: [id])
-
+  @@index([questionnaireQuestionId], map: "available_answers_questionnaireQuestionId_fkey")
   @@map("available_answers")
 }
 
-// Define the model for the 'reminders' table
 model reminders {
-  id             Int       @id @default(autoincrement())
+  id             Int         @id @default(autoincrement())
   user_id        Int
   medicine_name  String
   medicine_taken Int
@@ -115,16 +111,15 @@ model reminders {
   amount         Int
   cause          String?
   cap_size       Int
-  medicine_time  String?
-  created_at     DateTime  @default(now())
+  created_at     DateTime    @default(now())
   updated_at     DateTime?
+  medicine_time  String?
+  user           users       @relation(fields: [user_id], references: [id])
+  schedules      schedules[]
 
-  // Set foreign key relationship with the 'users' table
-  user      users       @relation(fields: [user_id], references: [id])
-  schedules schedules[]
+  @@index([user_id], map: "reminders_user_id_fkey")
 }
 
-// Define the model for the 'schedules' table
 model schedules {
   id          Int       @id @default(autoincrement())
   reminder_id Int
@@ -132,30 +127,27 @@ model schedules {
   status      Int
   created_at  DateTime  @default(now())
   updated_at  DateTime?
+  reminder    reminders @relation(fields: [reminder_id], references: [id], onDelete: Cascade)
 
-  // Set foreign key relationship with the 'reminders' table
-  reminder reminders @relation(fields: [reminder_id], references: [id], onDelete: Cascade)
+  @@index([reminder_id], map: "schedules_reminder_id_fkey")
 }
 
-// Define the model for the 'users' table
 model users {
-  id         Int       @id @default(autoincrement())
-  username   String
-  email      String
-  password   String
-  number     String
-  photo      String?
-  isAdmin    Boolean   @default(false)
-  created_at DateTime  @default(now())
-  updated_at DateTime?
-
-  // Define relationships with other tables
+  id                    Int                     @id @default(autoincrement())
+  username              String
+  email                 String
+  password              String
+  number                String
+  photo                 String?
+  isAdmin               Boolean                 @default(false)
+  created_at            DateTime                @default(now())
+  updated_at            DateTime?
   blood_pressures       blood_pressures[]
   bookmarks             bookmarks[]
+  questionnaire_answers questionnaire_answers[]
+  RefreshToken          refresh_tokens?
   reminders             reminders[]
   videos                videos[]
-  questionnaire_answers questionnaire_answers[]
-  RefreshToken          refresh_tokens[]
 }
 
 model refresh_tokens {
@@ -165,21 +157,20 @@ model refresh_tokens {
   user       users    @relation(fields: [user_id], references: [id])
 }
 
-// Define the model for the 'videos' table
 model videos {
-  id            Int       @id @default(autoincrement())
+  id            Int         @id @default(autoincrement())
   link          String
   user_id       Int
-  title         String
+  created_at    DateTime    @default(now())
+  updated_at    DateTime?
   author_name   String
   author_url    String
   thumbnail_url String
-  created_at    DateTime  @default(now())
-  updated_at    DateTime?
+  title         String
+  bookmarks     bookmarks[]
+  user          users       @relation(fields: [user_id], references: [id])
 
-  // Set foreign key relationship with the 'users' table
-  user      users       @relation(fields: [user_id], references: [id])
-  bookmarks bookmarks[]
+  @@index([user_id], map: "videos_user_id_fkey")
 }
 
 model articles {

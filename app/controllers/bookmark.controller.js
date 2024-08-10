@@ -8,27 +8,36 @@ export const createBookmark = async (req, res, next) => {
 
     const { video_id } = req.body;
 
-    const existingBookmark = await prisma.bookmarks.findFirst({
-      where: {
-        video_id: video_id,
-        user_id: data.id,
-      },
+    const user = await prisma.users.findUnique({
+      where: { id: data.id },
     });
 
-    if (existingBookmark) {
-      return res
-        .status(409)
-        .json({ success: false, message: "Bookmark already exists" });
+    if (user.isAdmin) {
+      const { user_id } = req.body;
+      const bookmarkAdmin = await prisma.bookmarks.create({
+        data: {
+          video_id: parseInt(video_id),
+          user_id: parseInt(user_id),
+        },
+      });
+      return res.json({ success: true, data: bookmarkAdmin });
+    } else {
+      const bookmarkExists = await prisma.bookmarks.findFirst({
+        where: { video_id: parseInt(video_id), user_id: data.id },
+      });
+
+      if (bookmarkExists) {
+        return res.status(400).json({ message: "Bookmark already exists" });
+      }
+
+      const bookmark = await prisma.bookmarks.create({
+        data: {
+          video_id: parseInt(video_id),
+          user_id: parseInt(data.id),
+        },
+      });
+      return res.json({ success: true, data: bookmark });
     }
-
-    const newBookmark = await prisma.bookmarks.create({
-      data: {
-        video_id,
-        user_id: data.id,
-      },
-    });
-
-    res.status(201).json({ success: true, data: newBookmark });
   } catch (error) {
     next(error);
   }
@@ -57,6 +66,67 @@ export const getAllBookmarks = async (req, res, next) => {
   }
 };
 
+export const getBookmarkById = async (req, res, next) => {
+  try {
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
+
+    const videoId = parseInt(req.params.id);
+
+    const user = await prisma.users.findUnique({
+      where: { id: data.id },
+    });
+
+    if (user.isAdmin) {
+      const bookmarkAdmin = await prisma.bookmarks.findFirst({
+        where: { video_id: videoId },
+      });
+      return res.json({ success: true, data: bookmarkAdmin });
+    } else {
+      const bookmark = await prisma.bookmarks.findFirst({
+        where: { video_id: videoId, user_id: data.id },
+      });
+      return res.json({ success: true, data: bookmark });
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
+export const updateBookmark = async (req, res, next) => {
+  try {
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
+
+    const videoId = parseInt(req.params.id);
+    const { user_id } = req.body;
+
+    const user = await prisma.users.findUnique({
+      where: { id: data.id },
+    });
+
+    if (user.isAdmin) {
+      const updatedBookmark = await prisma.bookmarks.update({
+        where: { video_id: videoId },
+        data: {
+          user_id: parseInt(user_id),
+        },
+      });
+      return res.json({ success: true, data: updatedBookmark });
+    } else {
+      const updatedBookmark = await prisma.bookmarks.update({
+        where: { video_id: videoId, user_id: data.id },
+        data: {
+          user_id,
+        },
+      });
+      return res.json({ success: true, data: updatedBookmark });
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
 export const deleteBookmark = async (req, res, next) => {
   try {
     const data = verifyToken(req.headers.access_token);
@@ -64,14 +134,21 @@ export const deleteBookmark = async (req, res, next) => {
 
     const videoId = parseInt(req.params.id);
 
-    const deletedBookmark = await prisma.bookmarks.deleteMany({
-      where: {
-        video_id: videoId,
-        user_id: data.id,
-      },
+    const user = await prisma.users.findUnique({
+      where: { id: data.id },
     });
 
-    res.json({ success: true, data: deletedBookmark });
+    if (user.isAdmin) {
+      await prisma.bookmarks.delete({
+        where: { video_id: videoId },
+      });
+      return res.json({ success: true, message: "Bookmark deleted" });
+    } else {
+      await prisma.bookmarks.delete({
+        where: { video_id: videoId, user_id: data.id },
+      });
+      return res.json({ success: true, message: "Bookmark deleted" });
+    }
   } catch (error) {
     next(error);
   }

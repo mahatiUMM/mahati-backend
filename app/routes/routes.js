@@ -65,7 +65,9 @@ routes.delete(
 
 // bookmark
 routes.get("/bookmark", tokenValidation(), bookmarkController.getAllBookmarks);
+routes.get("/bookmark/:id", tokenValidation(), bookmarkController.getBookmarkById);
 routes.post("/bookmark", tokenValidation(), bookmarkController.createBookmark);
+routes.put("/bookmark/:id", tokenValidation(), bookmarkController.updateBookmark);
 routes.delete(
   "/bookmark/:id",
   tokenValidation(),
