@@ -248,33 +248,6 @@ routes.get(
   tokenValidation(),
   userDashboardController.getAllUsers
 );
-routes.post(
-  "/admin/blood_pressure",
-  tokenValidation(),
-  imageUploader.single("image"),
-  bloodPressureController.createBloodPressureAdmin
-);
-routes.get(
-  "/admin/blood_pressure",
-  tokenValidation(),
-  bloodPressureController.getAllBloodPressuresAdmin
-);
-routes.get(
-  "/admin/blood_pressure/:id",
-  tokenValidation(),
-  bloodPressureController.getBloodPressureByIdAdmin
-);
-routes.put(
-  "/admin/blood_pressure/:id",
-  tokenValidation(),
-  imageUploader.single("image"),
-  bloodPressureController.updateBloodPressureAdmin
-);
-routes.delete(
-  "/admin/blood_pressure/:id",
-  tokenValidation(),
-  bloodPressureController.deleteBloodPressureAdmin
-)
 routes.get(
   "/admin/reminders",
   tokenValidation(),
