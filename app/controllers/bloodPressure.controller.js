@@ -71,25 +71,25 @@ export const getAllBloodPressures = async (req, res, next) => {
         skip,
         take,
       });
+
+      const totalRecords = await prisma.blood_pressures.count();
+      const pagination = getPaginationMeta(totalRecords, page);
+
+      return res.json({ success: true, data: bloodPressures, pagination });
     } else {
       bloodPressures = await prisma.blood_pressures.findMany({
         where: { user_id: data.id },
         skip,
         take,
       });
+
+      const totalRecords = await prisma.blood_pressures.count({
+        where: { user_id: data.id },
+      });
+      const pagination = getPaginationMeta(totalRecords, page);
+
+      return res.json({ success: true, data: bloodPressures, pagination });
     }
-
-    const totalRecords = await prisma.blood_pressures.count({
-      where: user.isAdmin ? {} : { user_id: data.id },
-    });
-
-    const pagination = getPaginationMeta(totalRecords, page, take);
-
-    res.json({
-      success: true,
-      data: bloodPressures,
-      pagination,
-    });
   } catch (error) {
     next(error);
   }
