@@ -134,17 +134,22 @@ export const getBloodPressureById = async (req, res, next) => {
 
 export const updateBloodPressure = async (req, res, next) => {
   try {
+
+    const { sistol, diastole, heartbeat } = req.body;
+    const bloodPressureId = parseInt(req.params.id);
+
     const data = verifyToken(req.headers.access_token);
     if (data?.status) return res.status(data.status).json(data);
-
-    const bloodPressureId = parseInt(req.params.id);
-    const { user_id, image, sistol, diastole, heartbeat } = req.body;
 
     const user = await prisma.users.findUnique({
       where: { id: data.id },
     });
 
+    // if no file is uploaded, use the existing image
+    let image = req.file ? req.file.path : req.body.image;
+
     if (user.isAdmin) {
+      const { user_id } = req.body;
       const updatedBloodPressure = await prisma.blood_pressures.update({
         where: { id: bloodPressureId },
         data: {
@@ -157,16 +162,27 @@ export const updateBloodPressure = async (req, res, next) => {
       });
       res.json({ success: true, data: updatedBloodPressure });
     } else {
+      const bloodPressure = await prisma.blood_pressures.findUnique({
+        where: { id: bloodPressureId },
+      });
+
+      if (!bloodPressure || bloodPressure.user_id !== data.id) {
+        return res.status(404).json({
+          status: 404,
+          message: "Blood pressure record not found.",
+        });
+      }
+
       const updatedBloodPressure = await prisma.blood_pressures.update({
         where: { id: bloodPressureId, user_id: data.id },
         data: {
-          user_id,
           image,
-          sistol,
-          diastole,
-          heartbeat,
+          sistol: parseInt(sistol),
+          diastole: parseInt(diastole),
+          heartbeat: parseInt(heartbeat),
         },
       });
+
       res.json({ success: true, data: updatedBloodPressure });
     }
   } catch (error) {

@@ -56,6 +56,7 @@ routes.post(
 routes.put(
   "/blood_pressure/:id",
   tokenValidation(),
+  imageUploader.single("image"),
   bloodPressureController.updateBloodPressure
 );
 routes.delete(
