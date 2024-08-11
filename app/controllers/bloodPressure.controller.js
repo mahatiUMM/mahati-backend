@@ -9,10 +9,6 @@ export const createBloodPressure = async (req, res, next) => {
     const data = verifyToken(req.headers.access_token);
     if (data?.status) return res.status(data.status).json(data);
 
-    if (!req.file) {
-      return res.status(400).json({ message: "Please upload an image file." });
-    }
-
     const image = req.file ? req.file.path : "";
 
     const user = await prisma.users.findUnique({
@@ -105,7 +101,6 @@ export const getBloodPressureById = async (req, res, next) => {
       }
       res.json({ success: true, data: bloodPressure });
     }
-
   } catch (error) {
     next(error);
   }
@@ -113,7 +108,6 @@ export const getBloodPressureById = async (req, res, next) => {
 
 export const updateBloodPressure = async (req, res, next) => {
   try {
-
     const { sistol, diastole, heartbeat } = req.body;
     const bloodPressureId = parseInt(req.params.id);
 
