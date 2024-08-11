@@ -33,8 +33,14 @@ routes.get(
   userDashboardController.getUserDashboard
 );
 
+// user profile
 routes.get("/profile", tokenValidation(), userController.getUser);
-routes.put("/profile", tokenValidation(), userController.updateUser);
+routes.put(
+  "/profile",
+  tokenValidation(),
+  imageUploader.single("image"),
+  userController.updateUser
+);
 
 // blood pressures
 routes.get(

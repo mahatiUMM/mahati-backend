@@ -35,18 +35,23 @@ export const updateUser = async (req, res, next) => {
     const data = verifyToken(req.headers.access_token);
     if (data?.status) return res.status(data.status).json(data);
 
-    const { id, username, email, number, photo } = req.body;
+    const { username, email, number } = req.body;
 
-    if (!id || !username || !email || !number) {
-      return res.status(400).json({
-        status: 400,
-        message: "Please provide all required fields.",
-      });
+    let photo = req.file ? req.file.path : req.body.photo;
+
+    if (!photo) {
+      if (!username || !email || !number) {
+        return res.status(400).json({
+          status: 400,
+          message:
+            "Please provide all required fields (username, email, number).",
+        });
+      }
     }
 
     const user = await prisma.users.update({
       where: {
-        id: id,
+        id: data.id,
       },
       data: {
         username,
