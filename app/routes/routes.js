@@ -13,6 +13,7 @@ import { exportController } from "../controllers/export.controller.js";
 import { articleController } from "../controllers/article.controller.js";
 import { userDashboardController } from "../controllers/userDashboard.controller.js";
 import { imageUploader, pdfUploader } from "../lib/multerStorage.js";
+import { userController } from "../controllers/user.controller.js";
 
 const routes = Router({ strict: true });
 
@@ -32,8 +33,8 @@ routes.get(
   userDashboardController.getUserDashboard
 );
 
-routes.get("/profile", tokenValidation(), authController.getUser);
-routes.put("/profile", tokenValidation(), authController.updateUser);
+routes.get("/profile", tokenValidation(), userController.getUser);
+routes.put("/profile", tokenValidation(), userController.updateUser);
 
 // blood pressures
 routes.get(
@@ -65,9 +66,17 @@ routes.delete(
 
 // bookmark
 routes.get("/bookmark", tokenValidation(), bookmarkController.getAllBookmarks);
-routes.get("/bookmark/:id", tokenValidation(), bookmarkController.getBookmarkById);
+routes.get(
+  "/bookmark/:id",
+  tokenValidation(),
+  bookmarkController.getBookmarkById
+);
 routes.post("/bookmark", tokenValidation(), bookmarkController.createBookmark);
-routes.put("/bookmark/:id", tokenValidation(), bookmarkController.updateBookmark);
+routes.put(
+  "/bookmark/:id",
+  tokenValidation(),
+  bookmarkController.updateBookmark
+);
 routes.delete(
   "/bookmark/:id",
   tokenValidation(),
