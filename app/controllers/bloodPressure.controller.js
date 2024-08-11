@@ -1,6 +1,5 @@
 import { prisma } from "../lib/dbConnect.js";
 export * as bloodPressureController from "./bloodPressure.controller.js";
-import { getPaginationMeta, getPaginationParams } from "../lib/pagination.js";
 import { verifyToken } from "../lib/tokenHandler.js";
 
 export const createBloodPressure = async (req, res, next) => {
@@ -58,34 +57,14 @@ export const getAllBloodPressures = async (req, res, next) => {
       where: { id: data.id },
     });
 
-    const { page = 1 } = req.query;
-    const { skip, take } = getPaginationParams(page);
-
-    let bloodPressures;
-
     if (user.isAdmin) {
-      bloodPressures = await prisma.blood_pressures.findMany({
-        skip,
-        take,
-      });
-
-      const totalRecords = await prisma.blood_pressures.count();
-      const pagination = getPaginationMeta(totalRecords, page);
-
-      return res.json({ success: true, data: bloodPressures, pagination });
+      const bloodPressures = await prisma.blood_pressures.findMany();
+      return res.json({ success: true, data: bloodPressures });
     } else {
-      bloodPressures = await prisma.blood_pressures.findMany({
-        where: { user_id: data.id },
-        skip,
-        take,
-      });
-
-      const totalRecords = await prisma.blood_pressures.count({
+      const bloodPressures = await prisma.blood_pressures.findMany({
         where: { user_id: data.id },
       });
-      const pagination = getPaginationMeta(totalRecords, page);
-
-      return res.json({ success: true, data: bloodPressures, pagination });
+      return res.json({ success: true, data: bloodPressures });
     }
   } catch (error) {
     next(error);
