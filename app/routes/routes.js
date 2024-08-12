@@ -1,7 +1,5 @@
 import { Router } from "express";
 import { tokenValidation } from "../lib/tokenHandler.js";
-import { authController } from "../controllers/auth.controller.js";
-import { bloodPressureController } from "../controllers/bloodPressure.controller.js";
 import { bookmarkController } from "../controllers/bookmark.controller.js";
 import { brochureController } from "../controllers/brochure.controller.js";
 import { questionnaireController } from "../controllers/questionnaire.controller.js";
@@ -15,16 +13,31 @@ import { userDashboardController } from "../controllers/userDashboard.controller
 import { imageUploader, pdfUploader } from "../lib/multerStorage.js";
 import { userController } from "../controllers/user.controller.js";
 
+import {
+  adminAuthRoutes,
+  adminBloodPressureRoutes
+} from "./admin/index.js";
+import {
+  userAuthRoutes,
+  userBloodPressureRoutes,
+  userArticleRoutes,
+} from "./user/index.js";
+
 const routes = Router({ strict: true });
 
-// auth
-routes.post("/signup", authController.signUp);
-routes.post("/signin", authController.signIn);
-routes.get(
-  "/refresh",
-  tokenValidation(true),
-  authController.refreshAccessToken
-);
+// Admin routes group
+const adminRoutes = Router();
+adminRoutes.use(adminBloodPressureRoutes);
+adminRoutes.use(adminAuthRoutes);
+routes.use("/admin", adminRoutes);
+
+
+// User routes group
+const userRoutes = Router();
+userRoutes.use(userAuthRoutes);
+userRoutes.use(userBloodPressureRoutes);
+userRoutes.use(userArticleRoutes);
+routes.use(userRoutes);
 
 // userDashboard
 routes.get(
@@ -40,35 +53,6 @@ routes.put(
   tokenValidation(),
   imageUploader.single("image"),
   userController.updateUser
-);
-
-// blood pressures
-routes.get(
-  "/blood_pressure",
-  tokenValidation(),
-  bloodPressureController.getAllBloodPressures
-);
-routes.get(
-  "/blood_pressure/:id",
-  tokenValidation(),
-  bloodPressureController.getBloodPressureById
-);
-routes.post(
-  "/blood_pressure",
-  tokenValidation(),
-  imageUploader.single("image"),
-  bloodPressureController.createBloodPressure
-);
-routes.put(
-  "/blood_pressure/:id",
-  tokenValidation(),
-  imageUploader.single("image"),
-  bloodPressureController.updateBloodPressure
-);
-routes.delete(
-  "/blood_pressure/:id",
-  tokenValidation(),
-  bloodPressureController.deleteBloodPressure
 );
 
 // bookmark
@@ -241,26 +225,24 @@ routes.get(
 );
 
 // article
-routes.get("/article", tokenValidation(), articleController.getAllArticles);
+// routes.get("/article", tokenValidation(), articleController.getAllArticles);
 
-routes.get("/article/:id", tokenValidation(), articleController.getArticleById);
+// routes.get("/article/:id", tokenValidation(), articleController.getArticleById);
 
-routes.post(
-  "/article",
-  pdfUploader.single("file"),
-  articleController.createArticle
-);
+// routes.post(
+//   "/article",
+//   pdfUploader.single("file"),
+//   articleController.createArticle
+// );
 
-routes.put("/article/:id", tokenValidation(), articleController.updateArticle);
+// routes.put("/article/:id", tokenValidation(), articleController.updateArticle);
 
-routes.delete(
-  "/article/:id",
-  tokenValidation(),
-  articleController.deleteArticle
-);
+// routes.delete(
+//   "/article/:id",
+//   tokenValidation(),
+//   articleController.deleteArticle
+// );
 
-// admin
-routes.post("/admin/signin", authController.signInAdmin);
 routes.get(
   "/admin/users",
   tokenValidation(),
