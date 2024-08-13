@@ -1,5 +1,6 @@
 import { prisma } from "../../lib/dbConnect.js";
 import { verifyToken } from "../../lib/tokenHandler.js";
+import { getUserById } from "../../lib/userHandler.js";
 
 export const createQuestionnaireQuestion = async (req, res, next) => {
   try {
@@ -47,88 +48,116 @@ export const getAllQuestionnaireQuestions = async (req, res, next) => {
     const data = verifyToken(req.headers.access_token);
     if (data?.status) return res.status(data.status).json(data);
 
-    const questionnaireQuestions =
-      await prisma.questionnaire_questions.findMany({
-        include: {
-          questionnaire: true,
-          questionnaire_answers: true,
-        },
-      });
+    const user = await getUserById(data.id);
 
-    res.json({ success: true, data: questionnaireQuestions });
+    if (user.isAdmin) {
+      const questionnaireQuestions =
+        await prisma.questionnaire_questions.findMany({
+          include: {
+            questionnaire: true,
+            questionnaire_answers: true,
+          },
+        });
+
+      res.json({ success: true, data: questionnaireQuestions });
+    } else {
+      res.status(403).json({
+        status: 403,
+        message: "You are not authorized to perform this action.",
+      });
+    }
   } catch (error) {
     next(error);
   }
-};
+}
 
 export const getQuestionnaireQuestionById = async (req, res, next) => {
   try {
     const data = verifyToken(req.headers.access_token);
     if (data?.status) return res.status(data.status).json(data);
 
-    const questionId = parseInt(req.params.id);
+    const questionnaireQuestionId = parseInt(req.params.id);
 
-    const questionnaireQuestion =
-      await prisma.questionnaire_questions.findUnique({
-        where: { id: questionId },
-        include: {
-          questionnaire: true,
-          questionnaire_answers: true,
-        },
-      });
+    const user = await getUserById(data.id);
 
-    if (!questionnaireQuestion) {
-      return res.status(404).json({
-        status: 404,
-        message: "Questionnaire question not found.",
+    if (user.isAdmin) {
+      const questionnaireQuestion =
+        await prisma.questionnaire_questions.findUnique({
+          where: { id: questionnaireQuestionId },
+          include: {
+            questionnaire: true,
+            questionnaire_answers: true,
+          },
+        });
+
+      res.json({ success: true, data: questionnaireQuestion });
+    } else {
+      res.status(403).json({
+        status: 403,
+        message: "You are not authorized to perform this action.",
       });
     }
-
-    res.json({ success: true, data: questionnaireQuestion });
   } catch (error) {
     next(error);
   }
-};
+}
 
 export const updateQuestionnaireQuestion = async (req, res, next) => {
   try {
     const data = verifyToken(req.headers.access_token);
     if (data?.status) return res.status(data.status).json(data);
 
-    const questionId = parseInt(req.params.id);
+    const questionnaireQuestionId = parseInt(req.params.id);
     const { questionnaire_id, question } = req.body;
 
-    const updatedQuestionnaireQuestion =
-      await prisma.questionnaire_questions.update({
-        where: { id: questionId },
-        data: {
-          questionnaire_id,
-          question,
-        },
-      });
+    const user = await getUserById(data.id);
 
-    res.json({ success: true, data: updatedQuestionnaireQuestion });
+    if (user.isAdmin) {
+      const updatedQuestionnaireQuestion =
+        await prisma.questionnaire_questions.update({
+          where: { id: questionnaireQuestionId },
+          data: {
+            questionnaire_id,
+            question,
+          },
+        });
+
+      res.json({ success: true, data: updatedQuestionnaireQuestion });
+    } else {
+      res.status(403).json({
+        status: 403,
+        message: "You are not authorized to perform this action.",
+      });
+    }
   } catch (error) {
     next(error);
   }
-};
+}
 
 export const deleteQuestionnaireQuestion = async (req, res, next) => {
   try {
     const data = verifyToken(req.headers.access_token);
     if (data?.status) return res.status(data.status).json(data);
 
-    const questionId = parseInt(req.params.id);
+    const questionnaireQuestionId = parseInt(req.params.id);
 
-    const deletedQuestionnaireQuestion =
+    const user = await getUserById(data.id);
+
+    if (user.isAdmin) {
       await prisma.questionnaire_questions.delete({
-        where: { id: questionId },
+        where: { id: questionnaireQuestionId },
       });
 
-    res.json({ success: true, data: deletedQuestionnaireQuestion });
+      res.json({ success: true, msg: "Questionnaire question deleted." });
+    } else {
+      res.status(403).json({
+        status: 403,
+        message: "You are not authorized to perform this action.",
+      });
+    }
   } catch (error) {
     next(error);
   }
-};
+}
 
-export * as userQuestionnaireQuestionController from "./questionnaireQuestion.controller.js";
+export * as adminQuesionnaireQuestionController from "./questionnaireQuestion.controller.js";
