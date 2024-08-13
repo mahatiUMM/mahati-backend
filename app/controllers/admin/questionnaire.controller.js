@@ -124,4 +124,30 @@ export const updateQuestionnaire = async (req, res, next) => {
   }
 }
 
+export const deleteQuestionnaire = async (req, res, next) => {
+  try {
+    const data = verifyToken(req.headers.access_token)
+    if (data?.status) return res.status(data.status).json(data)
+
+    const questionnaireId = parseInt(req.params.id)
+
+    const user = await getUserById(data.id);
+
+    if (user.isAdmin) {
+      await prisma.questionnaires.delete({
+        where: { id: questionnaireId },
+      })
+
+      res.json({ success: true, message: "Questionnaire deleted successfully." })
+    } else {
+      res.status(403).json({
+        status: 403,
+        message: "You are not authorized to perform this action.",
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
 export * as adminQuestionnaireController from "./questionnaire.controller.js";

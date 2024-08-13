@@ -39,7 +39,7 @@ export const createVideo = async (req, res, next) => {
   }
 }
 
-export const getAllVideo = async (req, res, next) => {
+export const getAllVideos = async (req, res, next) => {
   try {
     const data = verifyToken(req.headers.access_token);
     if (data?.status) return res.status(data.status).json(data);

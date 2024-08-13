@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { tokenValidation } from "../../lib/tokenHandler.js";
-import { adminBrochureController } from "../../controllers/admin/brochure.controller.js";
+import { userBrochureController } from "../../controllers/user/brochure.controller.js";
 import { imageUploader } from "../../lib/multerStorage.js";
 
 const routes = Router({ strict: true });
@@ -8,29 +8,29 @@ const routes = Router({ strict: true });
 routes.get(
   "/brochure",
   tokenValidation(),
-  adminBrochureController.getAllBrochures
+  userBrochureController.getAllBrochures
 );
 routes.get(
   "/brochure/:id",
   tokenValidation(),
-  adminBrochureController.getBrochureById
+  userBrochureController.getBrochureById
 );
 routes.post(
   "/brochure",
   tokenValidation(),
   imageUploader.array("images", 10),
-  adminBrochureController.createBrochure
+  userBrochureController.createBrochure
 );
 routes.put(
   "/brochure/:id",
   tokenValidation(),
   imageUploader.array("images", 10),
-  adminBrochureController.updateBrochure
+  userBrochureController.updateBrochure
 );
 routes.delete(
   "/brochure/:id",
   tokenValidation(),
-  adminBrochureController.deleteBrochure
+  userBrochureController.deleteBrochure
 );
 
 export default routes;
