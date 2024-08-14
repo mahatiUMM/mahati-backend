@@ -10,6 +10,11 @@ routes.get(
   userVideoController.getAllVideos
 );
 routes.get(
+  "/video_bookmarked",
+  tokenValidation(),
+  userVideoController.getAllBookmarkedVideos
+);
+routes.get(
   "/video/:id",
   tokenValidation(),
   userVideoController.getVideoById
