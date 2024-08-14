@@ -19,6 +19,11 @@ routes.post(
   tokenValidation(),
   userReminderController.createReminder
 );
+routes.post(
+  "/accept_reminder/:id",
+  tokenValidation(),
+  userReminderController.acceptReminder
+)
 routes.put(
   "/reminder/:id",
   tokenValidation(),
