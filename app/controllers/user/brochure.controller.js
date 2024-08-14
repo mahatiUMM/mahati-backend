@@ -35,7 +35,6 @@ export const getAllBrochures = async (req, res, next) => {
     if (data?.status) return res.status(data.status).json(data);
 
     const brochures = await prisma.brochures.findMany({
-      where: { user_id: data.id },
       include: {
         images: true,
       },
