@@ -47,7 +47,7 @@ export const createReminder = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}
+};
 
 export const getAllReminders = async (req, res, next) => {
   try {
@@ -65,7 +65,7 @@ export const getAllReminders = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}
+};
 
 export const getReminderById = async (req, res, next) => {
   try {
@@ -104,12 +104,18 @@ export const updateReminder = async (req, res, next) => {
       user_id,
       medicine_name,
       medicine_taken,
-      medicine_total,
       amount,
       cause,
       cap_size,
       medicine_time,
     } = req.body;
+
+    if (amount - medicine_taken < 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Obat Tidak boleh kosong, mohon isi ulang obat ${medicine_name}`,
+      });
+    }
 
     const updatedReminder = await prisma.reminders.update({
       where: { id: reminderId, user_id: data.id },
@@ -117,7 +123,7 @@ export const updateReminder = async (req, res, next) => {
         user_id,
         medicine_name,
         medicine_taken,
-        medicine_total,
+        medicine_total: amount - medicine_taken,
         amount,
         cause,
         cap_size,
