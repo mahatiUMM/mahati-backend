@@ -1,5 +1,6 @@
 import { prisma } from "../../lib/dbConnect.js";
 import { verifyToken } from "../../lib/tokenHandler.js";
+import { getUserById } from "../../lib/userHandler.js";
 
 export const createVideo = async (req, res, next) => {
   try {
