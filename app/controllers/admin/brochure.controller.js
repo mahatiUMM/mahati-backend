@@ -170,18 +170,19 @@ export const deleteBrochure = async (req, res, next) => {
     const user = await getUserById(data.id);
 
     if (user.isAdmin) {
-      const deletedBrochure = await prisma.brochures.delete({
-        where: { id: brochureId },
-        include: {
-          images: true,
-        },
+      if (brochure.images.length > 0) {
+        for (const image of brochure.images) {
+          await removeFile(image.imagePath);
+        }
+      }
+
+      await prisma.brochureimage.deleteMany({
+        where: { brochureId: brochureId },
       });
 
-      if (deletedBrochure.images.length > 0) {
-        deletedBrochure.images.forEach((image) => {
-          removeFile(image.imagePath);
-        });
-      }
+      const deletedBrochure = await prisma.brochures.delete({
+        where: { id: brochureId },
+      });
 
       res.json({ success: true, data: deletedBrochure });
     } else {
