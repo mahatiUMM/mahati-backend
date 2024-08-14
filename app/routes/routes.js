@@ -10,6 +10,7 @@ import {
   adminReminderRoutes,
   adminScheduleRoutes,
   adminUserRoutes,
+  adminVideoRoutes,
 } from "./admin/index.js";
 import {
   userArticleRoutes,
@@ -41,6 +42,7 @@ adminRoutes.use(adminQuestionnaireQuestionRoutes);
 adminRoutes.use(adminReminderRoutes);
 adminRoutes.use(adminScheduleRoutes);
 adminRoutes.use(adminUserRoutes);
+adminRoutes.use(adminVideoRoutes);
 routes.use("/admin", adminRoutes);
 
 

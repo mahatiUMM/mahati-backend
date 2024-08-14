@@ -8,6 +8,7 @@ import adminQuestionnaireQuestionRoutes from "./questionnaireQuestion.route.js";
 import adminReminderRoutes from "./reminder.route.js";
 import adminScheduleRoutes from "./schedule.route.js";
 import adminUserRoutes from "./user.route.js";
+import adminVideoRoutes from "./video.route.js";
 
 export {
   adminAuthRoutes,
@@ -20,4 +21,5 @@ export {
   adminReminderRoutes,
   adminScheduleRoutes,
   adminUserRoutes,
+  adminVideoRoutes,
 };
