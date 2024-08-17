@@ -95,7 +95,7 @@ export const updateQuestionnaire = async (req, res, next) => {
     if (data?.status) return res.status(data.status).json(data)
 
     const questionnaireId = parseInt(req.params.id)
-    const { type, questionnaire_questions, title, description } = req.body
+    const { type, title, description } = req.body
 
     const user = await getUserById(data.id);
 
@@ -106,10 +106,6 @@ export const updateQuestionnaire = async (req, res, next) => {
           type: parseInt(type),
           title,
           description,
-          questionnaire_questions: {
-            deleteMany: {},
-            create: questionnaire_questions,
-          },
         },
         include: {
           questionnaire_questions: true,
