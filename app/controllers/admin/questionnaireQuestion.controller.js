@@ -9,7 +9,7 @@ export const createQuestionnaireQuestion = async (req, res, next) => {
     const newQuestionnaireQuestion =
       await prisma.questionnaire_questions.create({
         data: {
-          questionnaire_id,
+          questionnaire_id: parseInt(questionnaire_id),
           available_answers: {
             create: available_answer,
           },
