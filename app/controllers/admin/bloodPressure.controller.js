@@ -88,18 +88,16 @@ export const getBloodPressureById = async (req, res, next) => {
 
 export const updateBloodPressure = async (req, res, next) => {
   try {
-    const { sistol, diastole, heartbeat } = req.body;
     const bloodPressureId = parseInt(req.params.id);
 
     const data = verifyToken(req.headers.access_token);
     if (data?.status) return res.status(data.status).json(data);
 
     let image = req.file ? req.file.path : req.body.image;
-
     const user = await getUserById(data.id);
 
     if (user.isAdmin) {
-      const { user_id } = req.body;
+      const { user_id, sistol, diastole, heartbeat } = req.body;
       const bloodPressure = await prisma.blood_pressures.findUnique({
         where: { id: bloodPressureId },
       });

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { tokenValidation } from "../../lib/tokenHandler.js";
 import { adminBloodPressureController } from "../../controllers/admin/bloodPressure.controller.js";
+import { imageUploader } from "../../lib/multerStorage.js";
 
 const routes = Router({ strict: true });
 
@@ -12,11 +13,13 @@ routes.get(
 routes.get(
   "/blood_pressure/:id",
   tokenValidation(),
+  imageUploader.single("image"),
   adminBloodPressureController.getBloodPressureById
 );
 routes.post(
   "/blood_pressure",
   tokenValidation(),
+  imageUploader.single("image"),
   adminBloodPressureController.createBloodPressure
 );
 routes.put(
