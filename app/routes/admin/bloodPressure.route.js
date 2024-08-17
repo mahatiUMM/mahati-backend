@@ -13,7 +13,6 @@ routes.get(
 routes.get(
   "/blood_pressure/:id",
   tokenValidation(),
-  imageUploader.single("image"),
   adminBloodPressureController.getBloodPressureById
 );
 routes.post(
@@ -25,6 +24,7 @@ routes.post(
 routes.put(
   "/blood_pressure/:id",
   tokenValidation(),
+  imageUploader.single("image"),
   adminBloodPressureController.updateBloodPressure
 );
 routes.delete(
