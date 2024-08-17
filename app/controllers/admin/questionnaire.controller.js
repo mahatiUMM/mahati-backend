@@ -8,7 +8,7 @@ export const createQuestionnaire = async (req, res, next) => {
 
     const newQuestionnaire = await prisma.questionnaires.create({
       data: {
-        type,
+        type: parseInt(type),
         title,
         description,
         questionnaire_questions: {
@@ -95,7 +95,7 @@ export const updateQuestionnaire = async (req, res, next) => {
     if (data?.status) return res.status(data.status).json(data)
 
     const questionnaireId = parseInt(req.params.id)
-    const { type, questionnaire_questions } = req.body
+    const { type, questionnaire_questions, title, description } = req.body
 
     const user = await getUserById(data.id);
 
@@ -103,7 +103,9 @@ export const updateQuestionnaire = async (req, res, next) => {
       const updatedQuestionnaire = await prisma.questionnaires.update({
         where: { id: questionnaireId },
         data: {
-          type,
+          type: parseInt(type),
+          title,
+          description,
           questionnaire_questions: {
             deleteMany: {},
             create: questionnaire_questions,
