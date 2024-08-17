@@ -4,11 +4,13 @@ import { getUserById } from "../../lib/userHandler.js";
 
 export const createQuestionnaire = async (req, res, next) => {
   try {
-    const { type, questionnaire_questions } = req.body
+    const { type, questionnaire_questions, title, description } = req.body
 
     const newQuestionnaire = await prisma.questionnaires.create({
       data: {
         type,
+        title,
+        description,
         questionnaire_questions: {
           create: questionnaire_questions,
         },
