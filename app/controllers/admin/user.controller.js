@@ -36,10 +36,12 @@ export const getUser = async (req, res, next) => {
           id: data.id,
         },
         include: {
-          isAdmin: true,
           questionnaire_answers: true,
           bookmarks: true,
           RefreshToken: true,
+          blood_pressures: true,
+          reminders: true,
+          videos: true,
         }
       })
 
