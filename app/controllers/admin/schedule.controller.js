@@ -6,16 +6,25 @@ export const createSchedule = async (req, res, next) => {
   try {
     const {
       reminder_id,
-      time, status
+      time,
+      status
     } = req.body;
+
+    const reminder = await prisma.reminders.findUnique({
+      where: { id: parseInt(reminder_id) },
+    });
+
+    if (!reminder) {
+      return res.status(404).json({ success: false, message: "Reminder not found" });
+    }
 
     const newSchedule = await prisma.schedules.create({
       data: {
-        reminder_id,
+        reminder_id: parseInt(reminder_id),
         time,
-        status,
-      },
-    });
+        status
+      }
+    })
 
     res.status(201).json({ success: true, data: newSchedule });
   } catch (error) {
