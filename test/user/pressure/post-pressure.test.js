@@ -1,7 +1,6 @@
 import supertest from "supertest";
 import app from "../../../app";
 
-
 describe("test POST /api/blood_pressure", () => {
   it("should return 201 when creating blood pressure", async () => {
     const response = await supertest(app)
@@ -62,7 +61,7 @@ describe("test POST /api/blood_pressure", () => {
   });
 
   it("should return 201 when image is png, jpg, and jpeg", async () => {
-    const filePath = `${__dirname}/Frame.png`;
+    const filePath = `${__dirname}/assets/Frame.png`;
     const response = await supertest(app)
       .post("/api/blood_pressure")
       .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`)
@@ -89,7 +88,7 @@ describe("test POST /api/blood_pressure", () => {
   });
 
   it("should return 400 when image is not png, jpg, and jpeg", async () => {
-    const filePath = `${__dirname}/Manual Book - MAHATI.pdf`;
+    const filePath = `${__dirname}/assets/Manual Book - MAHATI.pdf`;
     const response = await supertest(app)
       .post("/api/blood_pressure")
       .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`)
