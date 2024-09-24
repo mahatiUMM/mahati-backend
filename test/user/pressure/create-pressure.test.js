@@ -7,11 +7,9 @@ describe("test POST /api/blood_pressure", () => {
     const response = await supertest(app)
       .post("/api/blood_pressure")
       .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`)
-      .send({
-        "sistol": 120,
-        "diastole": 80,
-        "heartbeat": 70,
-      });
+      .field("sistol", 120)
+      .field("diastole", 80)
+      .field("heartbeat", 70);
 
     expect(response.status).toEqual(201);
     expect(response.body).toEqual({
@@ -239,5 +237,36 @@ describe("test POST /api/blood_pressure", () => {
       status: 400,
       message: "Sistol value should be between 90 and 120.",
     });
-  })
+  });
+
+  it("should return 400 when blood pressure values are decimal numbers", async () => {
+    const response = await supertest(app)
+      .post("/api/blood_pressure")
+      .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`)
+      .send({
+        "sistol": "120,5",
+        "diastole": 80,
+        "heartbeat": 70,
+      });
+
+    expect(response.status).toEqual(400);
+    expect(response.body).toEqual({
+      status: 400,
+      message: "Please use whole numbers for blood pressure values.",
+    });
+  });
+
+  it("should return 400 when blood pressure values are dot numbers", async () => {
+    const response = await supertest(app)
+      .post("/api/blood_pressure")
+      .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`)
+      .send({
+        "sistol": "120.5",
+        "diastole": 80,
+        "heartbeat": 70,
+      });
+
+    expect(response.status).toEqual(500);
+    expect(response.body).toEqual({});
+  });
 });
