@@ -8,6 +8,29 @@ export const createBloodPressure = async (req, res, next) => {
     if (data?.status) return res.status(data.status).json(data);
 
     const image = req.file ? req.file.path : "";
+
+    if (parseInt(sistol) < 20 || parseInt(sistol) >= 200) {
+      return res.status(400).json({
+        status: 400,
+        message: "Sistol value should be between 90 and 120.",
+      });
+    } else if (parseInt(diastole) < 20 || parseInt(diastole) >= 200) {
+      return res.status(400).json({
+        status: 400,
+        message: "Diastole value should be between 60 and 80.",
+      });
+    } else if (parseInt(heartbeat) < 20 || parseInt(heartbeat) >= 200) {
+      return res.status(400).json({
+        status: 400,
+        message: "Heartbeat value should be between 60 and 100.",
+      });
+    } else if (parseInt(sistol) < 0 || parseInt(diastole) < 0 || parseInt(heartbeat) < 0) {
+      return res.status(400).json({
+        status: 400,
+        message: "Blood pressure values should not be less than 0.",
+      });
+    }
+
     const newBloodPressure = await prisma.blood_pressures.create({
       data: {
         user_id: data.id,

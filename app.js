@@ -30,10 +30,8 @@ app.get("/", function (req, res) {
 app.use("/storage/uploads", express.static("./storage/uploads/"));
 app.use("/api", routes);
 
-// if (process.env.NODE_ENV != "testing") {
-//   app.listen(port, () => {
-//     console.log(`Server is running on port ${port} http://${host}:${port}`);
-//   });
-// }
+// app.listen(port, () => {
+//   console.log(`Server is running on port ${port} http://${host}:${port}`);
+// });
 
 export default app;
