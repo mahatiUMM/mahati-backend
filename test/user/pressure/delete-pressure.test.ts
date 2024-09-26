@@ -1,7 +1,6 @@
 import supertest from "supertest";
 import app from "../../../app";
 import { prisma } from "../../../app/lib/dbConnect";
-import e from "express";
 
 describe("test DELETE /api/blood_pressure/:id", () => {
   it("should return 200 when deleting a blood pressure", async () => {
