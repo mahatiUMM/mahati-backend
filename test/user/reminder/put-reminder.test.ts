@@ -23,12 +23,22 @@ describe("test PUT /api/reminder/:id", () => {
         medicine_time: "23:30"
       });
 
-    console.log(response.body);
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
       success: true,
       data: {
-        
+        id: expect.any(Number),
+        user_id: 3,
+        medicine_name: "Test Panadol Update",
+        medicine_taken: 1,
+        medicine_total: 1,
+        amount: 2,
+        cause: "Sakit Kepala Update",
+        cap_size: 2,
+        created_at: expect.any(String),
+        updated_at: null,
+        medicine_time: "23:30",
+        schedules: expect.any(Array)
       }
     })
   })
