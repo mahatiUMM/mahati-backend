@@ -87,7 +87,7 @@ describe("test POST /api/blood_pressure", () => {
     });
   });
 
-  it("should return 400 when image is not png, jpg, and jpeg", async () => {
+  it("should return 500 when image is not png, jpg, and jpeg", async () => {
     const filePath = `${__dirname}/assets/Manual Book - MAHATI.pdf`;
     const response = await supertest(app)
       .post("/api/blood_pressure")
@@ -255,7 +255,7 @@ describe("test POST /api/blood_pressure", () => {
     });
   });
 
-  it("should return 400 when blood pressure values are dot numbers", async () => {
+  it("should return 500 when blood pressure values are dot numbers", async () => {
     const response = await supertest(app)
       .post("/api/blood_pressure")
       .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`)

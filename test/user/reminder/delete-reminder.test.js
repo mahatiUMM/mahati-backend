@@ -34,5 +34,35 @@ describe("test DELETE /api/reminder/:id", () => {
         }
       }
     })
-  })
+  });
+
+  it("should return 404 when reminder record not found", async () => {
+    const response = await supertest(app)
+      .delete(`/api/reminder/999999`)
+      .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`)
+      .send();
+
+    expect(response.status).toEqual(404);
+    expect(response.body).toEqual({
+      success: false, message: "Reminder not found."
+    });
+  });
+
+  it("should return 401 when token is not provided", async () => {
+    const latestReminder = await prisma.reminders.findFirst({
+      orderBy: {
+        created_at: "desc"
+      }
+    });
+
+    const response = await supertest(app)
+      .delete(`/api/reminder/${latestReminder.id}`)
+      .send();
+
+    expect(response.status).toEqual(401);
+    expect(response.body).toEqual({
+      status: 401,
+      message: "Unauthorized: jwt must be provided",
+    });
+  });
 })

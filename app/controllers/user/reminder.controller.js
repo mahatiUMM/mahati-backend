@@ -200,6 +200,17 @@ export const deleteReminder = async (req, res, next) => {
 
     const reminderId = parseInt(req.params.id);
 
+    const reminder = await prisma.reminders.findUnique({
+      where: { id: reminderId, user_id: data.id },
+    })
+
+    if (!reminder) {
+      return res.status(404).json({
+        success: false,
+        message: "Reminder not found.",
+      })
+    }
+
     const deletedReminder = await prisma.reminders.delete({
       where: { id: reminderId, user_id: data.id },
     });
