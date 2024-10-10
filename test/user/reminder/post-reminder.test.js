@@ -34,5 +34,25 @@ describe("test POST /api/reminder", () => {
         medicine_time: "23:21"
       }
     })
-  })
+  });
+
+  it("should return 400 when missing required fields", async () => {
+    const response = await supertest(app)
+      .post("/api/reminder")
+      .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`)
+      .send({
+        "user_id": 3,
+        "medicine_total": 2,
+        "amount": 4,
+        "cause": "Sakit kepala",
+        "cap_size": 1,
+        "medicine_time": "23:21"
+      });
+
+    expect(response.status).toEqual(400);
+    expect(response.body).toEqual({
+      status: 400,
+      message: "Please provide all required fields",
+    })
+  });
 })

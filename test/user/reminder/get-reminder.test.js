@@ -1,5 +1,6 @@
 import supertest from "supertest";
 import app from "../../../app";
+import { prisma } from "../../../app/lib/dbConnect";
 
 describe("test GET /api/reminder", () => {
   it("should return 200 when getting all reminder by user", async () => {
@@ -27,4 +28,47 @@ describe("test GET /api/reminder", () => {
       ])
     })
   });
-})
+
+  it("should return 401 when token is not provided", async () => {
+    const response = await supertest(app)
+      .get("/api/reminder")
+
+    expect(response.status).toEqual(401);
+    expect(response.body).toEqual({
+      status: 401,
+      message: "Token is required"
+    })
+  });
+});
+
+describe("test GET /api/reminder/:id", () => {
+  it("should return 200 when getting reminder by id", async () => {
+    const latestReminder = await prisma.reminders.findFirst({
+      orderBy: {
+        id: "desc"
+      }
+    });
+
+    const response = await supertest(app)
+      .get(`/api/reminder/${latestReminder.id}`)
+      .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`);
+
+    expect(response.status).toEqual(200);
+    expect(response.body).toEqual({
+      success: true,
+      data: {
+        id: latestReminder.id,
+        user_id: latestReminder.user_id,
+        medicine_name: latestReminder.medicine_name,
+        medicine_taken: latestReminder.medicine_taken,
+        medicine_total: latestReminder.medicine_total,
+        amount: latestReminder.amount,
+        cause: latestReminder.cause,
+        cap_size: latestReminder.cap_size,
+        created_at: latestReminder.created_at,
+        updated_at: latestReminder.updated_at,
+        schedules: expect.any(Array)
+      }
+    });
+  });
+});
