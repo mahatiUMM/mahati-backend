@@ -41,5 +41,31 @@ describe("test PUT /api/reminder/:id", () => {
         schedules: expect.any(Array)
       }
     })
+  });
+
+  it("should return 401 when updating a reminder with no access token", async () => {
+    const latestReminder = await prisma.reminders.findFirst({
+      orderBy: {
+        created_at: "desc"
+      }
+    });
+
+    const response = await supertest(app)
+      .put(`/api/reminder/${latestReminder?.id}`)
+      .send({
+        user_id: 3,
+        medicine_name: "Test Panadol Update",
+        medicine_taken: 1,
+        amount: 2,
+        cause: "Sakit Kepala Update",
+        cap_size: 2,
+        medicine_time: "23:30"
+      });
+
+    expect(response.status).toBe(401);
+    expect(response.body).toEqual({
+      status: 401,
+      message: "Unauthorized: jwt must be provided"
+    })
   })
-})
+});
