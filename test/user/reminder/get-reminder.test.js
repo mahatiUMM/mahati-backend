@@ -71,4 +71,16 @@ describe("test GET /api/reminder/:id", () => {
       }
     });
   });
+
+  it("should return 404 when reminder id not found", async () => {
+    const response = await supertest(app)
+      .get(`/api/reminder/99999`)
+      .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`);
+
+    expect(response.status).toEqual(404);
+    expeect(response.data).toEqual({
+      status: 404,
+      message: "Reminder not found.",
+    });
+  });
 });
