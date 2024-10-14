@@ -1,5 +1,6 @@
 import supertest from "supertest";
 import app from "../../../app";
+import { prisma } from "../../../app/lib/dbConnect";
 
 describe("test POST /api/reminder", () => {
   it("should return 201 when creating reminder", async () => {
@@ -52,7 +53,28 @@ describe("test POST /api/reminder", () => {
     expect(response.status).toEqual(400);
     expect(response.body).toEqual({
       status: 400,
-      message: "Please provide all required fields",
+      message: "Please provide all required fields.",
     })
   });
+
+  it("should handle error in the createReminder controller", async () => {
+    jest.spyOn(prisma.reminders, "create").mockRejectedValue(new Error("Error from the test"));
+
+    const response = await supertest(app)
+      .post("/api/reminder")
+      .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`)
+      .send({
+        "user_id": 3,
+        "medicine_name": "Test Panadol",
+        "medicine_taken": 2,
+        "medicine_total": 2,
+        "amount": 4,
+        "cause": "Sakit kepala",
+        "cap_size": 1,
+        "medicine_time": "23:21"
+      });
+
+    expect(response.status).toEqual(500);
+    expect(response.body).toEqual({});
+  })
 })

@@ -1,16 +1,17 @@
 import supertest from "supertest";
 import app from "../../../app";
 import { prisma } from "../../../app/lib/dbConnect";
-import { removeTestUser, createTestUser } from "../..";
+import { removeTestUser, createTestUser, getTestUser } from "../..";
 
 describe("test POST /auth/signup", () => {
   beforeEach(async () => {
     await createTestUser();
+    await getTestUser();
     await prisma.users.deleteMany({
       where: {
         username: "test-user"
       }
-    })
+    });
   });
 
   afterEach(async () => {
@@ -51,6 +52,12 @@ describe("test POST /auth/signup", () => {
         "username": "",
         "password": "secret",
       })
+
+    expect(response.status).toEqual(400);
+    expect(response.body).toEqual({
+      status: 400,
+      message: "Email address is already in use."
+    });
   });
 
   it("should return 400 when email is already in use", async () => {
@@ -69,4 +76,20 @@ describe("test POST /auth/signup", () => {
       message: "Email address is already in use."
     })
   });
-})
+
+  it("should handle error in signUp controller", async () => {
+    jest.spyOn(prisma.users, "create").mockImplementation(new Error("error"));
+
+    const response = await supertest(app)
+      .post("/api/signup")
+      .send({
+        "username": "rizky",
+        "email": "",
+        "password": "rizky123",
+        "number": "081234567890"
+      })
+
+    expect(response.status).toEqual(500);
+    expect(response.body).toEqual({});
+  });
+});

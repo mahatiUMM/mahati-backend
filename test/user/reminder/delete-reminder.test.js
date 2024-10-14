@@ -65,4 +65,37 @@ describe("test DELETE /api/reminder/:id", () => {
       message: "Unauthorized: jwt must be provided",
     });
   });
-})
+
+  // it("should handle errors in the deleteReminder controller", async () => {
+  //   jest.spyOn(prisma.reminders, "delete").mockRejectedValue(new Error("Something went wrong"));
+
+  //   const response = await supertest(app)
+  //     .delete(`/api/reminder/1`)
+  //     .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`)
+  //     .send();
+
+  //   console.log(response.body);
+
+  //   expect(response.status).toEqual(500);
+  //   expect(response.body).toEqual({});
+  // });
+
+  it("should handle errors in the deleteReminder controller", async () => {
+    jest.spyOn(prisma.reminders, "findUnique").mockResolvedValue({
+      id: 1,
+      user_id: 3,
+      medicine_name: "Test Reminder",
+
+    });
+
+    jest.spyOn(prisma.reminders, "delete").mockRejectedValue(new Error("Something went wrong"));
+
+    const response = await supertest(app)
+      .delete(`/api/reminder/1`)
+      .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`)
+      .send();
+
+    expect(response.status).toEqual(500);
+    expect(response.body).toEqual({});
+  });
+});

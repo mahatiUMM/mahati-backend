@@ -1,5 +1,6 @@
 import supertest from "supertest";
 import app from "../../../app.js";
+import { prisma } from "../../../app/lib/dbConnect.js";
 
 describe("test POST /auth/login", () => {
   it("should return 200 when logging in", async () => {
@@ -78,5 +79,19 @@ describe("test POST /auth/login", () => {
       status: 404,
       message: "Pengguna tidak ditemukan"
     });
+  });
+
+  it("should handle error in signIn controller", async () => {
+    jest.spyOn(prisma.users, "findFirst").mockRejectedValue(new Error("Error from the test"));
+
+    const response = await supertest(app)
+      .post("/api/signin")
+      .send({
+        email: "test@example.com",
+        password: "password123",
+      });
+
+    expect(response.status).toEqual(500);
+    expect(response.body).toEqual({});
   });
 });

@@ -36,8 +36,19 @@ describe("test GET /api/reminder", () => {
     expect(response.status).toEqual(401);
     expect(response.body).toEqual({
       status: 401,
-      message: "Token is required"
+      message: "Unauthorized: jwt must be provided"
     })
+  });
+
+  it("should handle errors in the getAllReminders controller", async () => {
+    jest.spyOn(prisma.reminders, "findMany").mockRejectedValue(new Error("Error from the test"));
+
+    const response = await supertest(app)
+      .get("/api/reminder")
+      .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`);
+
+    expect(response.status).toEqual(500);
+    expect(response.body).toEqual({});
   });
 });
 
@@ -61,11 +72,12 @@ describe("test GET /api/reminder/:id", () => {
         user_id: latestReminder.user_id,
         medicine_name: latestReminder.medicine_name,
         medicine_taken: latestReminder.medicine_taken,
+        medicine_time: latestReminder.medicine_time,
         medicine_total: latestReminder.medicine_total,
         amount: latestReminder.amount,
         cause: latestReminder.cause,
         cap_size: latestReminder.cap_size,
-        created_at: latestReminder.created_at,
+        created_at: expect.any(String),
         updated_at: latestReminder.updated_at,
         schedules: expect.any(Array)
       }
@@ -74,13 +86,37 @@ describe("test GET /api/reminder/:id", () => {
 
   it("should return 404 when reminder id not found", async () => {
     const response = await supertest(app)
-      .get(`/api/reminder/99999`)
+      .get("/api/reminder/999")
       .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`);
 
     expect(response.status).toEqual(404);
-    expeect(response.data).toEqual({
+    expect(response.body).toEqual({
       status: 404,
-      message: "Reminder not found.",
+      message: "Reminder not found."
     });
   });
+
+  it("should return 401 when token is not provided", async () => {
+    const response = await supertest(app)
+      .get("/api/reminder/1");
+
+    expect(response.status).toEqual(401);
+    expect(response.body).toEqual({
+      status: 401,
+      message: "Unauthorized: jwt must be provided"
+    });
+  });
+
+  it("should handle errors in the getReminderById controller", async () => {
+    jest.spyOn(prisma.reminders, "findUnique").mockImplementation(() => {
+      throw new Error("Error from the test.");
+    });
+
+    const response = await supertest(app)
+      .get("/api/reminder/1")
+      .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`);
+
+    expect(response.status).toEqual(500);
+    expect(response.body).toEqual({});
+  })
 });

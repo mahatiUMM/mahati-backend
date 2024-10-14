@@ -66,5 +66,25 @@ describe("test PUT /api/blood_pressure/:id", () => {
       status: 401,
       message: "Unauthorized: jwt must be provided"
     });
-  })
-})
+  });
+
+  it("should handle error in updateBloodPressure controller", async () => {
+    jest.spyOn(prisma.blood_pressures, "update").mockRejectedValue(new Error("Error from the test"));
+
+    const latestPressure = await prisma.blood_pressures.findFirst({
+      orderBy: {
+        created_at: "desc"
+      }
+    });
+
+    const response = await supertest(app)
+      .put(`/api/blood_pressure/${latestPressure.id}`)
+      .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`)
+      .field("sistol", 121)
+      .field("diastole", 81)
+      .field("heartbeat", 71);
+
+    expect(response.status).toEqual(500);
+    expect(response.body).toEqual({});
+  });
+});

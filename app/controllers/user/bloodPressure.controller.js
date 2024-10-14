@@ -24,11 +24,6 @@ export const createBloodPressure = async (req, res, next) => {
         status: 400,
         message: "Heartbeat value should be between 60 and 200.",
       });
-    } else if (parseInt(sistol) < 0 || parseInt(diastole) < 0 || parseInt(heartbeat) < 0) {
-      return res.status(400).json({
-        status: 400,
-        message: "Blood pressure values should not be less than 0.",
-      });
     } else if (
       sistol.includes(",") ||
       diastole.includes(",") ||

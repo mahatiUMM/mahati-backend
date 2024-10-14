@@ -43,7 +43,7 @@ describe("test PUT /api/reminder/:id", () => {
     })
   });
 
-  it("should return 401 when updating a reminder with no access token", async () => {
+  it("should return 401 when token is not provided", async () => {
     const latestReminder = await prisma.reminders.findFirst({
       orderBy: {
         created_at: "desc"
@@ -66,6 +66,53 @@ describe("test PUT /api/reminder/:id", () => {
     expect(response.body).toEqual({
       status: 401,
       message: "Unauthorized: jwt must be provided"
-    })
-  })
+    });
+  });
+
+  it("should return 400 when amount - medicine_taken is less than 0", async () => {
+    const latestReminder = await prisma.reminders.findFirst({
+      orderBy: {
+        created_at: "desc"
+      }
+    });
+
+    const response = await supertest(app)
+      .put(`/api/reminder/${latestReminder?.id}`)
+      .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`)
+      .send({
+        user_id: 3,
+        medicine_name: "Test Panadol Update",
+        medicine_taken: 1,
+        amount: 0,
+        cause: "Sakit Kepala Update",
+        cap_size: 2,
+        medicine_time: "23:30"
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({
+      success: false,
+      message: `Obat Tidak boleh kosong, mohon isi ulang obat ${latestReminder?.medicine_name}`
+    });
+  });
+
+  it("should handle errors in the updateReminder controller", async () => {
+    jest.spyOn(prisma.reminders, 'update').mockRejectedValue(new Error('Something went wrong'));
+
+    const response = await supertest(app)
+      .put('/api/reminder/1')
+      .set('Authorization', `Bearer ${process.env.TEST_TOKEN}`)
+      .send({
+        user_id: 1,
+        medicine_name: 'Test Panadol Update',
+        medicine_taken: 1,
+        amount: 2,
+        cause: 'Sakit Kepala Update',
+        cap_size: 2,
+        medicine_time: '23:30',
+      });
+
+    expect(response.status).toBe(500);
+    expect(response.body).toEqual({});
+  });
 });

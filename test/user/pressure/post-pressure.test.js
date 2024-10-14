@@ -115,7 +115,7 @@ describe("test POST /api/blood_pressure", () => {
     expect(response.status).toEqual(400);
     expect(response.body).toEqual({
       status: 400,
-      message: "Sistol value should be between 90 and 120.",
+      message: "Sistol value should be between 90 and 200.",
     });
   })
 
@@ -132,7 +132,7 @@ describe("test POST /api/blood_pressure", () => {
     expect(response.status).toEqual(400);
     expect(response.body).toEqual({
       status: 400,
-      message: "Sistol value should be between 90 and 120.",
+      message: "Sistol value should be between 90 and 200.",
     });
   })
 
@@ -149,7 +149,7 @@ describe("test POST /api/blood_pressure", () => {
     expect(response.status).toEqual(400);
     expect(response.body).toEqual({
       status: 400,
-      message: "Diastole value should be between 60 and 80.",
+      message: "Diastole value should be between 60 and 200.",
     });
   });
 
@@ -166,7 +166,7 @@ describe("test POST /api/blood_pressure", () => {
     expect(response.status).toEqual(400);
     expect(response.body).toEqual({
       status: 400,
-      message: "Diastole value should be between 60 and 80.",
+      message: "Diastole value should be between 60 and 200.",
     });
   });
 
@@ -183,7 +183,7 @@ describe("test POST /api/blood_pressure", () => {
     expect(response.status).toEqual(400);
     expect(response.body).toEqual({
       status: 400,
-      message: "Heartbeat value should be between 60 and 100.",
+      message: "Heartbeat value should be between 60 and 200.",
     });
   });
 
@@ -200,7 +200,7 @@ describe("test POST /api/blood_pressure", () => {
     expect(response.status).toEqual(400);
     expect(response.body).toEqual({
       status: 400,
-      message: 'Heartbeat value should be between 60 and 100.'
+      message: 'Heartbeat value should be between 60 and 200.'
     })
   });
 
@@ -217,7 +217,7 @@ describe("test POST /api/blood_pressure", () => {
     expect(response.status).toEqual(400);
     expect(response.body).toEqual({
       status: 400,
-      message: "Sistol value should be between 90 and 120.",
+      message: "Sistol value should be between 90 and 200.",
     });
   });
 
@@ -234,7 +234,7 @@ describe("test POST /api/blood_pressure", () => {
     expect(response.status).toEqual(400);
     expect(response.body).toEqual({
       status: 400,
-      message: "Sistol value should be between 90 and 120.",
+      message: "Sistol value should be between 90 and 200.",
     });
   });
 
@@ -268,4 +268,21 @@ describe("test POST /api/blood_pressure", () => {
     expect(response.status).toEqual(500);
     expect(response.body).toEqual({});
   });
+
+  it("should return 400 when blood pressure values are less than 0", async () => {
+    const response = await supertest(app)
+      .post("/api/blood_pressure")
+      .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`)
+      .send({
+        "sistol": -1,
+        "diastole": -1,
+        "heartbeat": -1,
+      });
+
+    expect(response.status).toEqual(400);
+    expect(response.body).toEqual({
+      status: 400,
+      message: "Sistol value should be between 90 and 200.",
+    });
+  })
 });
