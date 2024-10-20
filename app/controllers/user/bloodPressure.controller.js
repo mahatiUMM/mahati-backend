@@ -12,17 +12,17 @@ export const createBloodPressure = async (req, res, next) => {
     if (parseInt(sistol) < 20 || parseInt(sistol) >= 200) {
       return res.status(400).json({
         status: 400,
-        message: "Sistol value should be between 90 and 200.",
+        message: "Sistol value should be between 20 and 200.",
       });
     } else if (parseInt(diastole) < 20 || parseInt(diastole) >= 200) {
       return res.status(400).json({
         status: 400,
-        message: "Diastole value should be between 60 and 200.",
+        message: "Diastole value should be between 20 and 200.",
       });
     } else if (parseInt(heartbeat) < 20 || parseInt(heartbeat) >= 200) {
       return res.status(400).json({
         status: 400,
-        message: "Heartbeat value should be between 60 and 200.",
+        message: "Heartbeat value should be between 20 and 200.",
       });
     } else if (
       sistol.includes(",") ||
