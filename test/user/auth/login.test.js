@@ -7,8 +7,8 @@ describe("test POST /auth/login", () => {
     const response = await supertest(app)
       .post("/api/signin")
       .send({
-        "email": "rizky@gmail.com",
-        "password": "rizky123"
+        "email": process.env.USER_EMAIL,
+        "password": process.env.USER_PASSWORD
       })
 
     expect(response.status).toEqual(200);
@@ -40,7 +40,7 @@ describe("test POST /auth/login", () => {
     const response = await supertest(app)
       .post("/api/signin")
       .send({
-        "email": "rizky@gmail.com",
+        "email": process.env.USER_EMAIL,
         "password": "wrongpassword"
       })
 
