@@ -70,8 +70,69 @@ describe("test GET /api/article", () => {
   });
 });
 
-describe("test GET /api/article/:id", async () => {
-  it("should return 200 when getting article by id", async () => {
+describe("test GET /api/article/:id", () => {
+  it("should return 200 when getting article by", async () => {
+    const latestArticle = await prisma.articles.findFirst({
+      orderBy: {
+        created_at: "desc"
+      }
+    });
 
+    const response = await supertest(app)
+      .get(`/api/article/${latestArticle.id}`)
+      .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`);
+
+    expect(response.status).toEqual(200);
+    expect(response.body).toEqual({
+      success: true,
+      data: {
+        id: latestArticle.id,
+        title: latestArticle.title,
+        description: latestArticle.description,
+        file: latestArticle.file,
+        created_at: expect.any(String),
+        updated_at: null
+      }
+    })
+  });
+
+  it("should return 404 when article id is not found", async () => {
+    const response = await supertest(app)
+      .get("/api/article/999999")
+      .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`);
+
+    expect(response.status).toEqual(404);
+    expect(response.body).toEqual({
+      status: 404,
+      message: "Article not found."
+    });
+  });
+
+  it("should return 401 when token is provided", async () => {
+    const response = await supertest(app)
+      .get("/api/article/1");
+
+    expect(response.status).toEqual(401);
+    expect(response.body).toEqual({
+      status: 401,
+      message: "Unauthorized: jwt must be provided"
+    });
+  });
+
+  it("should handle errors in the getArticleById controller", async () => {
+    const latestArticle = await prisma.articles.findFirst({
+      orderBy: {
+        created_at: "desc"
+      }
+    });
+
+    jest.spyOn(prisma.articles, "findUnique").mockImplementation(new Error("Error for testing purpose"));
+
+    const response = await supertest(app)
+      .get(`/api/article/${latestArticle.id}`)
+      .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`);
+
+    expect(response.status).toEqual(500);
+    expect(response.body).toEqual({});
   });
 });

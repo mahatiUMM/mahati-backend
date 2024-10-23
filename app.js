@@ -31,8 +31,8 @@ app.use("/storage/uploads", express.static("./storage/uploads/"));
 app.use("/api", routes);
 
 // comment when running tests
-app.listen(port, () => {
-  console.log(`Server is running on port ${port} http://${host}:${port}`);
-});
+// app.listen(port, () => {
+//   console.log(`Server is running on port ${port} http://${host}:${port}`);
+// });
 
 export default app;
