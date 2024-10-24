@@ -1,7 +1,23 @@
 import supertest from "supertest";
 import app from "../../../app";
+import { prisma } from "../../../app/lib/dbConnect";
 
 describe("test POST /api/blood_pressure", () => {
+  afterAll(async () => {
+    await prisma.blood_pressures.findFirst({
+      orderBy: {
+        created_at: "desc"
+      }
+    }).then(async (latestBloodPressure) => {
+      await prisma.blood_pressures.delete({
+        where: {
+          id: latestBloodPressure.id
+        }
+      });
+    })
+  });
+
+
   it("should return 201 when creating blood pressure", async () => {
     const response = await supertest(app)
       .post("/api/blood_pressure")

@@ -10,12 +10,14 @@ describe("test PUT /api/reminder/:id", () => {
       }
     });
 
+    const randomNumber = Math.floor(Math.random() * 1000);
+
     const response = await supertest(app)
       .put(`/api/reminder/${latestReminder?.id}`)
       .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`)
       .send({
         user_id: 3,
-        medicine_name: "Test Panadol Update",
+        medicine_name: `Test Panadol Update ${randomNumber}`,
         medicine_taken: 1,
         amount: 2,
         cause: "Sakit Kepala Update",
@@ -29,7 +31,7 @@ describe("test PUT /api/reminder/:id", () => {
       data: {
         id: expect.any(Number),
         user_id: 3,
-        medicine_name: "Test Panadol Update",
+        medicine_name: `Test Panadol Update ${randomNumber}`,
         medicine_taken: 1,
         medicine_total: 1,
         amount: 2,
@@ -53,13 +55,13 @@ describe("test PUT /api/reminder/:id", () => {
     const response = await supertest(app)
       .put(`/api/reminder/${latestReminder?.id}`)
       .send({
-        user_id: 3,
-        medicine_name: "Test Panadol Update",
-        medicine_taken: 1,
-        amount: 2,
-        cause: "Sakit Kepala Update",
-        cap_size: 2,
-        medicine_time: "23:30"
+        user_id: latestReminder?.user_id,
+        medicine_name: latestReminder?.medicine_name,
+        medicine_taken: latestReminder?.medicine_taken,
+        amount: latestReminder?.amount,
+        cause: latestReminder?.cause,
+        cap_size: latestReminder?.cap_size,
+        medicine_time: latestReminder?.medicine_time
       });
 
     expect(response.status).toBe(401);
@@ -92,7 +94,7 @@ describe("test PUT /api/reminder/:id", () => {
     expect(response.status).toBe(400);
     expect(response.body).toEqual({
       success: false,
-      message: `Obat Tidak boleh kosong, mohon isi ulang obat ${latestReminder?.medicine_name}`
+      message: `Obat Tidak boleh kosong, mohon isi ulang obat Test Panadol Update`
     });
   });
 
