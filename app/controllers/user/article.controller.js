@@ -15,6 +15,10 @@ export const createArticle = async (req, res, next) => {
       return res.status(400).json({ message: "Please upload a pdf file." });
     }
 
+    if (!title || !description) {
+      return res.status(400).json({ message: "Please fill all required fields." });
+    }
+
     const newArticle = await prisma.articles.create({
       data: {
         title,
@@ -70,6 +74,8 @@ export const updateArticle = async (req, res, next) => {
   try {
     const { title, description } = req.body;
     const articleId = parseInt(req.params.id);
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
 
     const article = await prisma.articles.findUnique({
       where: { id: articleId },
@@ -81,6 +87,10 @@ export const updateArticle = async (req, res, next) => {
         message: "Article not found.",
       });
     }
+
+    if (!title || !description) {
+      return res.status(400).json({ message: "Please fill all required fields." });
+    };
 
     const updatedArticle = await prisma.articles.update({
       where: { id: articleId },
@@ -102,6 +112,8 @@ export const deleteArticle = async (req, res, next) => {
     const article = await prisma.articles.findUnique({
       where: { id: articleId },
     });
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
 
     if (!article) {
       return res.status(404).json({
