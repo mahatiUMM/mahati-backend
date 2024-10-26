@@ -106,7 +106,7 @@ export const deleteBookmark = async (req, res, next) => {
 
     return res.json({ success: true, message: "Bookmark deleted" });
   } catch (error) {
-    next(error);
+    res.status(500).json({ error: "Something went wrong" });
   }
 }
 

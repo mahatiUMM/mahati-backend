@@ -108,9 +108,7 @@ describe("test GET /api/reminder/:id", () => {
   });
 
   it("should handle errors in the getReminderById controller", async () => {
-    jest.spyOn(prisma.reminders, "findUnique").mockImplementation(() => {
-      throw new Error("Error from the test.");
-    });
+    jest.spyOn(prisma.reminders, "findUnique").mockImplementation(new Error("Error from the test."));
 
     const response = await supertest(app)
       .get("/api/reminder/1")

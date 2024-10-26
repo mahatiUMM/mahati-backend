@@ -115,5 +115,16 @@ describe("test GET /api/bookmark/:id", () => {
       status: 401,
       message: "Unauthorized: jwt malformed",
     });
-  })
+  });
+
+  it("should handle errors in the getBookmarkById controller", async () => {
+    jest.spyOn(prisma.bookmarks, "findUnique").mockRejectedValue(new Error("Error from the test"));
+
+    const response = await supertest(app)
+      .get("/api/bookmark/1")
+      .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`);
+
+    expect(response.status).toEqual(500);
+    expect(response.body).toEqual({});
+  });
 })
