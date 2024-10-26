@@ -54,6 +54,14 @@ describe("test DELETE /api/article/:id", () => {
   });
 
   it("should handle errors in the deleteArticle controller", async () => {
+    jest.spyOn(prisma.articles, "findUnique").mockResolvedValue({
+      id: 1,
+      title: "Title",
+      description: "Description",
+      created_at: new Date(),
+      updated_at: new Date()
+    });
+
     jest.spyOn(prisma.articles, "delete").mockRejectedValue(new Error("Error from the test"));
 
     const response = await supertest(app)

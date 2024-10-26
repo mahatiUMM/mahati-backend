@@ -71,7 +71,6 @@ describe("test DELETE /api/reminder/:id", () => {
       id: 1,
       user_id: 3,
       medicine_name: "Test Reminder",
-
     });
 
     jest.spyOn(prisma.reminders, "delete").mockRejectedValue(new Error("Something went wrong"));
