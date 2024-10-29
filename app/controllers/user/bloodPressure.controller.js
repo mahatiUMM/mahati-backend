@@ -24,18 +24,6 @@ export const createBloodPressure = async (req, res, next) => {
         status: 400,
         message: "Heartbeat value should be between 20 and 200.",
       });
-    } else if (
-      sistol.includes(",") ||
-      diastole.includes(",") ||
-      heartbeat.includes(",") ||
-      sistol.includes(".") ||
-      diastole.includes(".") ||
-      heartbeat.includes(".")
-    ) {
-      return res.status(400).json({
-        status: 400,
-        message: "Please use whole numbers for blood pressure values.",
-      });
     }
 
     const newBloodPressure = await prisma.blood_pressures.create({
