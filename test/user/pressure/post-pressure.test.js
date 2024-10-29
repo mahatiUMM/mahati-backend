@@ -254,7 +254,7 @@ describe("test POST /api/blood_pressure", () => {
     });
   });
 
-  it("should return 400 when blood pressure values are decimal numbers", async () => {
+  it("should return 200 when blood pressure values are decimal numbers", async () => {
     const response = await supertest(app)
       .post("/api/blood_pressure")
       .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`)
@@ -264,14 +264,23 @@ describe("test POST /api/blood_pressure", () => {
         "heartbeat": 70,
       });
 
-    expect(response.status).toEqual(400);
+    expect(response.status).toEqual(201);
     expect(response.body).toEqual({
-      status: 400,
-      message: "Please use whole numbers for blood pressure values.",
+      success: true,
+      data: {
+        id: expect.any(Number),
+        user_id: 3,
+        image: "",
+        sistol: 120,
+        diastole: 80,
+        heartbeat: 70,
+        created_at: expect.any(String),
+        updated_at: null,
+      },
     });
   });
 
-  it("should return 500 when blood pressure values are dot numbers", async () => {
+  it("should return 200 when blood pressure values are dot numbers", async () => {
     const response = await supertest(app)
       .post("/api/blood_pressure")
       .set("Authorization", `Bearer ${process.env.TEST_TOKEN}`)
@@ -281,8 +290,20 @@ describe("test POST /api/blood_pressure", () => {
         "heartbeat": 70,
       });
 
-    expect(response.status).toEqual(500);
-    expect(response.body).toEqual({});
+    expect(response.status).toEqual(201);
+    expect(response.body).toEqual({
+      success: true,
+      data: {
+        id: expect.any(Number),
+        user_id: 3,
+        image: "",
+        sistol: 120,
+        diastole: 80,
+        heartbeat: 70,
+        created_at: expect.any(String),
+        updated_at: null,
+      },
+    });
   });
 
   it("should return 400 when blood pressure values are less than 0", async () => {
