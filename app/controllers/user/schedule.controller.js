@@ -27,9 +27,6 @@ export const getAllSchedules = async (req, res, next) => {
     const schedules = await prisma.schedules.findMany({
       include: {
         reminder: true,
-      },
-      where: {
-        user_id: data.id
       }
     })
 
