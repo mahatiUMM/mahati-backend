@@ -2,7 +2,7 @@
 
 ## Introduction
 
-MAHATI API using prisma and MySQL
+MAHATI Rest API using Prisma ORM
 
 ## Table of Contents
 
@@ -31,7 +31,7 @@ MAHATI API using prisma and MySQL
 
 | No. | Endpoints                       | Method |
 | --- | ------------------------------- | ------ |
-| 1   | <https://mahati.be.example.com> | GET    |
+| 1   | <https://mahati.xyzuan.my.id> | GET    |
 
 ## Libraries
 
@@ -47,6 +47,8 @@ MAHATI API using prisma and MySQL
 
 - `app`
   - `controller`
+    - `admin`
+    - `user`
   - `lib`
   - `routes`
 - `app.js`
