@@ -14,20 +14,5 @@ routes.get(
   tokenValidation(),
   userQuestionnaireController.getQuestionnaireById
 );
-routes.post(
-  "/questionnaire",
-  tokenValidation(),
-  userQuestionnaireController.createQuestionnaire
-);
-routes.put(
-  "/questionnaire/:id",
-  tokenValidation(),
-  userQuestionnaireController.updateQuestionnaire
-);
-routes.delete(
-  "/questionnaire/:id",
-  tokenValidation(),
-  userQuestionnaireController.deleteQuestionnaire
-);
 
 export default routes;
