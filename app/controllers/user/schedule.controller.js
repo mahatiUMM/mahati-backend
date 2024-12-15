@@ -70,7 +70,7 @@ export const updateSchedule = async (req, res, next) => {
 
     const scheduleId = parseInt(req.params.id);
     const schedule = await prisma.schedules.findUnique({
-      where: { id: scheduleId, user_id: data.id },
+      where: { id: scheduleId },
     });
 
     if (!schedule) {
@@ -83,7 +83,7 @@ export const updateSchedule = async (req, res, next) => {
     const { reminder_id, time, status } = req.body;
 
     const updatedSchedule = await prisma.schedules.update({
-      where: { id: scheduleId, user_id: data.id },
+      where: { id: scheduleId },
       data: {
         reminder_id,
         time,
@@ -107,21 +107,28 @@ export const deleteSchedule = async (req, res, next) => {
 
     const scheduleId = parseInt(req.params.id);
     const schedule = await prisma.schedules.findUnique({
-      where: { id: scheduleId, user_id: data.id },
+      where: { id: scheduleId },
     });
 
-    if (!schedule) {
-      return res.status(404).json({
-        status: 404,
-        message: "Schedule not found.",
+    if (!data?.id) {
+      return res.status(401).json({
+        status: 401,
+        message: "Unauthorized to delete schedule.",
       });
+    } else {
+      if (!schedule) {
+        return res.status(404).json({
+          status: 404,
+          message: "Schedule not found.",
+        });
+      }
+
+      await prisma.schedules.delete({
+        where: { id: scheduleId },
+      });
+
+      res.json({ success: true, message: "Schedule deleted successfully." });
     }
-
-    await prisma.schedules.delete({
-      where: { id: scheduleId, user_id: data.id },
-    });
-
-    res.json({ success: true, message: "Schedule deleted successfully." });
   } catch (error) {
     next(error);
   }
