@@ -10,4 +10,19 @@ describe("test GET /api/questionnaire_question", () => {
 
     console.log(response.body);
   });
+
+  it("should return 401 when no token provided", async () => {
+    const response = await supertest(app)
+      .get("/api/questionnaire_question");
+
+    console.log(response.body);
+  });
+
+  it("should return 401 when invalid token provided", async () => {
+    const response = await supertest(app)
+      .get("/api/questionnaire_question")
+      .set("Authorization", `Bearer invalidtoken`);
+
+    console.log(response.body);
+  });
 });
