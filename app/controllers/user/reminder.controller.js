@@ -17,9 +17,9 @@ export const createReminder = async (req, res, next) => {
     if (
       !user_id ||
       !medicine_name ||
-      !medicine_taken ||
-      !medicine_total ||
-      !amount ||
+      (!medicine_taken && medicine_taken < 0) ||
+      (!medicine_total && medicine_total <= 0) ||
+      (!amount && amount < 0) ||
       !cause ||
       !cap_size ||
       !medicine_time
