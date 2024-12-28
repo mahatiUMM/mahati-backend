@@ -5,6 +5,11 @@ import { removeFile } from "../../lib/multerStorage.js";
 export const createArticle = async (req, res, next) => {
   try {
     const { title, description } = req.body;
+
+    if (!title || !description) {
+      return res.status(400).json({ message: "Please fill all required fields." });
+    }
+    
     if (!req.file) {
       return res.status(400).json({ message: "Please upload a pdf file." });
     }
@@ -13,10 +18,6 @@ export const createArticle = async (req, res, next) => {
 
     if (!pdf) {
       return res.status(400).json({ message: "Please upload a pdf file." });
-    }
-
-    if (!title || !description) {
-      return res.status(400).json({ message: "Please fill all required fields." });
     }
 
     const newArticle = await prisma.articles.create({
