@@ -16,10 +16,12 @@ routes.get(
 );
 routes.post(
   "/questionnaire_question",
+  tokenValidation(),
   adminQuesionnaireQuestionController.createQuestionnaireQuestion
 );
 routes.post(
   "/questionnaire_question_answer",
+  tokenValidation(),
   adminQuesionnaireQuestionController.createQuestionnaireQuestionAnswer
 )
 routes.put(

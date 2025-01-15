@@ -4,20 +4,39 @@ import { getUserById } from "../../lib/userHandler.js";
 
 export const createQuestionnaireQuestion = async (req, res, next) => {
   try {
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
+
     const { questionnaire_id, question, available_answer } = req.body;
 
-    const newQuestionnaireQuestion =
-      await prisma.questionnaire_questions.create({
-        data: {
-          questionnaire_id: parseInt(questionnaire_id),
-          available_answers: {
-            create: available_answer,
-          },
-          question,
-        },
+    if (!questionnaire_id || !question) {
+      return res.status(400).json({
+        status: 400,
+        message: "Please provide all required fields.",
       });
+    }
 
-    res.status(201).json({ success: true, data: newQuestionnaireQuestion });
+    const user = await getUserById(data.id);
+
+    if (user.isAdmin) {
+      const newQuestionnaireQuestion =
+        await prisma.questionnaire_questions.create({
+          data: {
+            questionnaire_id: parseInt(questionnaire_id),
+            available_answers: {
+              create: available_answer,
+            },
+            question,
+          },
+        });
+
+      res.status(201).json({ success: true, data: newQuestionnaireQuestion });
+    } else {
+      res.status(403).json({
+        status: 403,
+        message: "You are not authorized to perform this action.",
+      });
+    }
   } catch (error) {
     next(error);
   }
@@ -25,19 +44,31 @@ export const createQuestionnaireQuestion = async (req, res, next) => {
 
 export const createQuestionnaireQuestionAnswer = async (req, res, next) => {
   try {
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
+
     const { user_id, answers } = req.body;
 
-    for (const answer of answers) {
-      await prisma.questionnaire_answers.create({
-        data: {
-          user_id: user_id,
-          question_id: answer.questionnaireQuestionId,
-          answer: answer.answerId,
-        },
+    const user = await getUserById(data.id);
+
+    if (user.isAdmin) {
+      for (const answer of answers) {
+        await prisma.questionnaire_answers.create({
+          data: {
+            user_id: user_id,
+            question_id: answer.questionnaireQuestionId,
+            answer: answer.answerId,
+          },
+        });
+      }
+
+      res.status(201).json({ success: true, msg: "Success Input Survey Data" });
+    } else {
+      res.status(403).json({
+        status: 403,
+        message: "You are not authorized to perform this action.",
       });
     }
-
-    res.status(201).json({ success: true, msg: "Success Input Survey Data" });
   } catch (error) {
     next(error);
   }

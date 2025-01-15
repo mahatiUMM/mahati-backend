@@ -177,11 +177,49 @@ export const deleteQuestionnaire = async (req, res, next) => {
     const user = await getUserById(data.id);
 
     if (user.isAdmin) {
-      await prisma.questionnaires.delete({
-        where: { id: questionnaireId },
-      })
+      const hasChildren = await prisma.questionnaire_questions.findFirst({
+        where: {
+          questionnaire_id: questionnaireId,
+        },
+      });
 
-      res.json({ success: true, message: "Questionnaire deleted successfully." })
+      if (hasChildren) {
+        await prisma.$transaction(async (prisma) => {
+          await prisma.available_answers.deleteMany({
+            where: {
+              questionnaireQuestion: {
+                questionnaire_id: questionnaireId,
+              },
+            },
+          });
+
+          await prisma.questionnaire_answers.deleteMany({
+            where: {
+              question: {
+                questionnaire_id: questionnaireId,
+              },
+            },
+          });
+
+          await prisma.questionnaire_questions.deleteMany({
+            where: {
+              questionnaire_id: questionnaireId,
+            },
+          });
+
+          await prisma.questionnaires.delete({
+            where: { id: questionnaireId },
+          });
+        });
+
+        return res.json({ success: true, message: "Questionnaire deleted successfully." });
+      } else {
+        await prisma.questionnaires.delete({
+          where: { id: questionnaireId },
+        });
+
+        return res.json({ success: true, message: "Questionnaire deleted successfully." });
+      }
     } else {
       res.status(403).json({
         status: 403,
