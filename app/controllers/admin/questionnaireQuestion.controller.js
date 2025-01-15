@@ -42,38 +42,6 @@ export const createQuestionnaireQuestion = async (req, res, next) => {
   }
 }
 
-export const createQuestionnaireQuestionAnswer = async (req, res, next) => {
-  try {
-    const data = verifyToken(req.headers.access_token);
-    if (data?.status) return res.status(data.status).json(data);
-
-    const { user_id, answers } = req.body;
-
-    const user = await getUserById(data.id);
-
-    if (user.isAdmin) {
-      for (const answer of answers) {
-        await prisma.questionnaire_answers.create({
-          data: {
-            user_id: user_id,
-            question_id: answer.questionnaireQuestionId,
-            answer: answer.answerId,
-          },
-        });
-      }
-
-      res.status(201).json({ success: true, msg: "Success Input Survey Data" });
-    } else {
-      res.status(403).json({
-        status: 403,
-        message: "You are not authorized to perform this action.",
-      });
-    }
-  } catch (error) {
-    next(error);
-  }
-}
-
 export const getAllQuestionnaireQuestions = async (req, res, next) => {
   try {
     const data = verifyToken(req.headers.access_token);
@@ -180,6 +148,75 @@ export const deleteQuestionnaireQuestion = async (req, res, next) => {
       });
 
       res.json({ success: true, msg: "Questionnaire question deleted." });
+    } else {
+      res.status(403).json({
+        status: 403,
+        message: "You are not authorized to perform this action.",
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
+// questionnaire question answer
+export const getAllQuestionnaireQuestionAnswers = async (req, res, next) => {
+  try {
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
+
+    const user = await getUserById(data.id);
+
+    if (user.isAdmin) {
+      const questionnaireQuestionAnswers = await prisma.questionnaire_answers.findMany({
+        include: {
+          user: true,
+          question: {
+            include: {
+              available_answers: {
+                select: {
+                  answer_text: true
+                }
+              }
+            }
+          }
+        }
+      });
+
+      res.json({ success: true, data: questionnaireQuestionAnswers });
+    } else {
+      res.status(403).json({
+        status: 403,
+        message: "You are not authorized to perform this action.",
+      });
+    }
+
+  } catch (error) {
+    next(error);
+  }
+}
+
+export const createQuestionnaireQuestionAnswer = async (req, res, next) => {
+  try {
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
+
+    const { user_id, answers } = req.body;
+
+    const user = await getUserById(data.id);
+
+    if (user.isAdmin) {
+      for (const answer of answers) {
+        await prisma.questionnaire_answers.create({
+          data: {
+            user_id: user_id,
+            question_id: answer.questionnaireQuestionId,
+            answer: answer.answerId,
+          },
+        });
+      }
+
+      res.status(201).json({ success: true, msg: "Success Input Survey Data" });
     } else {
       res.status(403).json({
         status: 403,

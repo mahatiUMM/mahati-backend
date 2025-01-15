@@ -19,11 +19,6 @@ routes.post(
   tokenValidation(),
   adminQuesionnaireQuestionController.createQuestionnaireQuestion
 );
-routes.post(
-  "/questionnaire_question_answer",
-  tokenValidation(),
-  adminQuesionnaireQuestionController.createQuestionnaireQuestionAnswer
-)
 routes.put(
   "/questionnaire_question/:id",
   tokenValidation(),
@@ -33,6 +28,18 @@ routes.delete(
   "/questionnaire_question/:id",
   tokenValidation(),
   adminQuesionnaireQuestionController.deleteQuestionnaireQuestion
+);
+
+// Questionnaire Question Answer
+routes.get(
+  "/questionnaire_question_answer",
+  tokenValidation(),
+  adminQuesionnaireQuestionController.getAllQuestionnaireQuestionAnswers
+);
+routes.post(
+  "/questionnaire_question_answer",
+  tokenValidation(),
+  adminQuesionnaireQuestionController.createQuestionnaireQuestionAnswer
 );
 
 export default routes;
