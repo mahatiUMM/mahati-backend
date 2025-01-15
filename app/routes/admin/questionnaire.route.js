@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { tokenValidation } from "../../lib/tokenHandler.js";
 import { adminQuestionnaireController } from "../../controllers/admin/questionnaire.controller.js";
+import { imageUploader } from "../../lib/multerStorage.js";
 
 const routes = Router({ strict: true });
 
@@ -17,11 +18,13 @@ routes.get(
 routes.post(
   "/questionnaire",
   tokenValidation(),
+  imageUploader.single("image"),
   adminQuestionnaireController.createQuestionnaire
 );
 routes.put(
   "/questionnaire/:id",
   tokenValidation(),
+  imageUploader.single("image"),
   adminQuestionnaireController.updateQuestionnaire
 );
 routes.delete(

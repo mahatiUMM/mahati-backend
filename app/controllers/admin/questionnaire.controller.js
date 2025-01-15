@@ -4,31 +4,44 @@ import { getUserById } from "../../lib/userHandler.js";
 
 export const createQuestionnaire = async (req, res, next) => {
   try {
-    const { type, image, questionnaire_questions, title, description } = req.body
+    const data = verifyToken(req.headers.access_token)
 
-    if (!type || !title || !description || !questionnaire_questions) {
+    if (data?.status) return res.status(data.status).json(data)
+    const { type, questionnaire_questions, title, description } = req.body
+
+    if (!type || !title || !description) {
       return res.status(400).json({
         status: 400,
         message: "Please provide all required fields.",
       });
     }
 
-    const newQuestionnaire = await prisma.questionnaires.create({
-      data: {
-        type: parseInt(type),
-        title,
-        image,
-        description,
-        questionnaire_questions: {
-          create: questionnaire_questions,
-        },
-      },
-      include: {
-        questionnaire_questions: true,
-      },
-    })
+    const image = req.file ? req.file.path : null
 
-    res.status(201).json({ success: true, data: newQuestionnaire })
+    const user = await getUserById(data.id);
+
+    if (user.isAdmin) {
+      const newQuestionnaire = await prisma.questionnaires.create({
+        data: {
+          type: parseInt(type),
+          title,
+          image,
+          description,
+          questionnaire_questions: {
+            create: questionnaire_questions,
+          },
+        },
+        include: {
+          questionnaire_questions: true,
+        },
+      })
+      res.status(201).json({ success: true, data: newQuestionnaire })
+    } else {
+      res.status(403).json({
+        status: 403,
+        message: "You are not authorized to perform this action.",
+      });
+    }
   } catch (error) {
     next(error)
   }
