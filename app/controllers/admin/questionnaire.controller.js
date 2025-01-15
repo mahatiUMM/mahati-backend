@@ -123,7 +123,7 @@ export const updateQuestionnaire = async (req, res, next) => {
     if (data?.status) return res.status(data.status).json(data)
 
     const questionnaireId = parseInt(req.params.id)
-    const { type, title, description, image } = req.body
+    const { type, title, description } = req.body
 
     if (!type || !title || !description) {
       return res.status(400).json({
@@ -131,6 +131,8 @@ export const updateQuestionnaire = async (req, res, next) => {
         message: "Please provide all required fields.",
       });
     }
+
+    const image = req.file ? req.file.path : null
 
     const user = await getUserById(data.id);
 
