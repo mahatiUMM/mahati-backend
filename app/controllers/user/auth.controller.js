@@ -4,6 +4,21 @@ import { prisma } from "../../lib/dbConnect.js";
 import { generateToken, verifyToken } from "../../lib/tokenHandler.js";
 import { createHash } from "crypto";
 
+const fetchUserByEmail = async(email) => {
+  const user = await prisma.users.findFirst({
+    where: { email: email }
+  });
+
+  if (!user) {
+    return res.status(404).json({
+      status: 404,
+      message: "Pengguna tidak ditemukan",
+    });
+  }
+
+  return email;
+}
+
 export const signUp = async (req, res, next) => {
   try {
     const { username, email, password, number, photo } = req.body;
@@ -149,6 +164,41 @@ export const refreshAccessToken = async (req, res, next) => {
       refresh_token,
     });
   } catch (err) {
+    next(err);
+  }
+};
+
+export const forgetPassword = async (req, res, next) =>{
+  try{
+    const {email, password} = req.body;
+    
+    // Fetch user by email
+    const user = await prisma.users.findFirst({
+      where: { email: email }
+    });
+  
+    if (!user) {
+      return res.status(404).json({
+        status: 404,
+        message: "Pengguna tidak ditemukan",
+      });
+    }
+
+      const saltRounds = 12;
+      const hashPassword = await bcryptjs.hash(password, saltRounds);
+
+    const updatePassword = await prisma.users.update({
+      where: { id: user.id },
+      data: {
+        email,
+        password: hashPassword},
+      select:{
+        username:true,
+        email:true,
+      }
+    })
+    res.status(200).json({ success: true, data: updatePassword});
+  }catch (err){
     next(err);
   }
 };

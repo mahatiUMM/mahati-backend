@@ -16,4 +16,9 @@ routes.post(
   userAuthController.refreshAccessToken
 );
 
+routes.put(
+  '/forget_password', 
+  userAuthController.forgetPassword)
+  ;
+
 export default routes;
