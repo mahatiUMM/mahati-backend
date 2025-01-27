@@ -168,7 +168,7 @@ export const getAllQuestionnaireQuestionAnswers = async (req, res, next) => {
     const user = await getUserById(data.id);
 
     if (user.isAdmin) {
-      const questionnaireQuestionAnswers = await prisma.questionnaire_answers.findMany({
+      const histories = await prisma.questionnaire_answers.findMany({
         include: {
           user: true,
           question: {
@@ -183,7 +183,20 @@ export const getAllQuestionnaireQuestionAnswers = async (req, res, next) => {
         }
       });
 
-      res.json({ success: true, data: questionnaireQuestionAnswers });
+      const availableAnswers = await prisma.available_answers.findMany();
+
+      const formattedHistories = histories.map((history) => {
+        const selectedAnswer = availableAnswers.find(
+          answer => answer.id === history.answer
+        );
+
+        return {
+          ...history,
+          selectedAnswer: selectedAnswer ? selectedAnswer.answer_text : null
+        };
+      });
+
+      res.json({ success: true, data: formattedHistories });
     } else {
       res.status(403).json({
         status: 403,

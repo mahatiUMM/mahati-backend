@@ -132,13 +132,16 @@ export const getHistoryQuestionnaireQuestion = async (req, res, next) => {
       }
     })
 
-    const formattedHistories = histories.map(history => {
-      const selectedAnswerIndex = history.answer - 1;
-      const selectedAnswerText = history.question.available_answers[selectedAnswerIndex]?.answer_text || 'Unknown';
+    const availableAnswers = await prisma.available_answers.findMany();
+
+    const formattedHistories = histories.map((history) => {
+      const selectedAnswer = availableAnswers.find(
+        answer => answer.id === history.answer
+      );
 
       return {
         ...history,
-        selected_answer: selectedAnswerText
+        selectedAnswer: selectedAnswer ? selectedAnswer.answer_text : null
       };
     });
 
