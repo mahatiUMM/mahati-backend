@@ -159,8 +159,10 @@ export const updateVideo = async (req, res, next) => {
 
 export const deleteVideo = async (req, res, next) => {
   try {
-    const videoId = parseInt(req.params.id);
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
 
+    const videoId = parseInt(req.params.id);
     const user = await getUserById(data.id);
 
     if (user.isAdmin) {
