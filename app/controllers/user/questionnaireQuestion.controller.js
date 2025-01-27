@@ -22,26 +22,6 @@ export const createQuestionnaireQuestion = async (req, res, next) => {
   }
 }
 
-export const createQuestionnaireQuestionAnswer = async (req, res, next) => {
-  try {
-    const { user_id, answers } = req.body;
-
-    for (const answer of answers) {
-      await prisma.questionnaire_answers.create({
-        data: {
-          user_id: user_id,
-          question_id: answer.questionnaireQuestionId,
-          answer: answer.answerId,
-        },
-      });
-    }
-
-    res.status(201).json({ success: true, msg: "Success Input Survey Data" });
-  } catch (error) {
-    next(error);
-  }
-}
-
 export const getAllQuestionnaireQuestions = async (req, res, next) => {
   try {
     const data = verifyToken(req.headers.access_token);
@@ -130,5 +110,62 @@ export const deleteQuestionnaireQuestion = async (req, res, next) => {
     next(error);
   }
 };
+
+// Questionnaire Question Answer
+export const getHistoryQuestionnaireQuestion = async (req, res, next) => {
+  try {
+    const data = verifyToken(req.headers.access_token);
+    if (data?.status) return res.status(data.status).json(data);
+
+    const histories = await prisma.questionnaire_answers.findMany({
+      where: { user_id: data.id },
+      include: {
+        question: {
+          include: {
+            available_answers: {
+              select: {
+                answer_text: true
+              }
+            }
+          }
+        }
+      }
+    })
+
+    const formattedHistories = histories.map(history => {
+      const selectedAnswerIndex = history.answer - 1;
+      const selectedAnswerText = history.question.available_answers[selectedAnswerIndex]?.answer_text || 'Unknown';
+
+      return {
+        ...history,
+        selected_answer: selectedAnswerText
+      };
+    });
+
+    res.json({ success: true, data: formattedHistories });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createQuestionnaireQuestionAnswer = async (req, res, next) => {
+  try {
+    const { user_id, answers } = req.body;
+
+    for (const answer of answers) {
+      await prisma.questionnaire_answers.create({
+        data: {
+          user_id: user_id,
+          question_id: answer.questionnaireQuestionId,
+          answer: answer.answerId,
+        },
+      });
+    }
+
+    res.status(201).json({ success: true, msg: "Success Input Survey Data" });
+  } catch (error) {
+    next(error);
+  }
+}
 
 export * as userQuestionnaireQuestionController from "./questionnaireQuestion.controller.js";

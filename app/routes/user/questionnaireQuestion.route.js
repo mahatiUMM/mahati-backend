@@ -29,4 +29,16 @@ routes.delete(
   userQuestionnaireQuestionController.deleteQuestionnaireQuestion
 );
 
+// Questionnaire Question Answer
+routes.get(
+  "/questionnaire_question_answer",
+  tokenValidation(),
+  userQuestionnaireQuestionController.getHistoryQuestionnaireQuestion
+);
+
+routes.post(
+  "/questionnaire_question_answer",
+  userQuestionnaireQuestionController.createQuestionnaireQuestionAnswer
+);
+
 export default routes;
