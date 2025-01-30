@@ -4,6 +4,7 @@ import adminBookmarkRoutes from "./bookmark.route.js";
 import adminBrochureRoutes from "./brochure.route.js";
 import adminExportRoutes from "./export.route.js";
 import adminQuestionnaireRoutes from "./questionnaire.route.js";
+import adminQuestionnaireAnswerRoutes from "./questionnaireAnswer.route.js"
 import adminQuestionnaireQuestionRoutes from "./questionnaireQuestion.route.js";
 import adminReminderRoutes from "./reminder.route.js";
 import adminScheduleRoutes from "./schedule.route.js";
@@ -17,6 +18,7 @@ export {
   adminBrochureRoutes,
   adminExportRoutes,
   adminQuestionnaireRoutes,
+  adminQuestionnaireAnswerRoutes,
   adminQuestionnaireQuestionRoutes,
   adminReminderRoutes,
   adminScheduleRoutes,

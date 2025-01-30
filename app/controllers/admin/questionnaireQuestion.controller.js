@@ -159,7 +159,7 @@ export const deleteQuestionnaireQuestion = async (req, res, next) => {
   }
 }
 
-// questionnaire question answer
+// Questionnaire Question Answer
 export const getAllQuestionnaireQuestionAnswers = async (req, res, next) => {
   try {
     const data = verifyToken(req.headers.access_token);

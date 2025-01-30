@@ -4,6 +4,7 @@ import { adminQuesionnaireQuestionController } from "../../controllers/admin/que
 
 const routes = Router({ strict: true });
 
+// Questionnaire Question
 routes.get(
   "/questionnaire_question",
   tokenValidation(),
