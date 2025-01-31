@@ -6,6 +6,7 @@ import {
   adminBrochureRoutes,
   adminExportRoutes,
   adminQuestionnaireRoutes,
+  adminQuestionnaireAnswerRoutes,
   adminQuestionnaireQuestionRoutes,
   adminReminderRoutes,
   adminScheduleRoutes,
@@ -38,6 +39,7 @@ adminRoutes.use(adminBookmarkRoutes);
 adminRoutes.use(adminBrochureRoutes);
 adminRoutes.use(adminExportRoutes);
 adminRoutes.use(adminQuestionnaireRoutes);
+adminRoutes.use(adminQuestionnaireAnswerRoutes);
 adminRoutes.use(adminQuestionnaireQuestionRoutes);
 adminRoutes.use(adminReminderRoutes);
 adminRoutes.use(adminScheduleRoutes);
