@@ -20,7 +20,7 @@ export const createQuestionnaireQuestion = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}
+};
 
 export const getAllQuestionnaireQuestions = async (req, res, next) => {
   try {
@@ -122,26 +122,36 @@ export const getHistoryQuestionnaireQuestion = async (req, res, next) => {
       include: {
         question: {
           include: {
+            questionnaire: {
+              select: {
+                id:true,
+                title: true,
+                image: true,
+                description: true,
+              },
+            },
             available_answers: {
               select: {
-                answer_text: true
-              }
-            }
-          }
-        }
-      }
-    })
+                id:true,
+                answer_text: true,
+              },
+            },
+          },
+        },
+      },
+    });
 
     const availableAnswers = await prisma.available_answers.findMany();
 
     const formattedHistories = histories.map((history) => {
       const selectedAnswer = availableAnswers.find(
-        answer => answer.id === history.answer
+        (answer) => answer.id === history.answer
       );
 
       return {
         ...history,
-        selectedAnswer: selectedAnswer ? selectedAnswer.answer_text : null
+        selected_answer: selectedAnswer ? selectedAnswer.answer_text : null,
+        selected_answer_id: selectedAnswer ? selectedAnswer.id : null,
       };
     });
 
@@ -169,6 +179,6 @@ export const createQuestionnaireQuestionAnswer = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}
+};
 
 export * as userQuestionnaireQuestionController from "./questionnaireQuestion.controller.js";

@@ -193,7 +193,6 @@ export const forgetPassword = async (req, res, next) =>{
         email,
         password: hashPassword},
       select:{
-        username:true,
         email:true,
       }
     })
