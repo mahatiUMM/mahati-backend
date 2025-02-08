@@ -119,12 +119,15 @@ export const getHistoryQuestionnaireQuestion = async (req, res, next) => {
 
     const histories = await prisma.questionnaire_answers.findMany({
       where: { user_id: data.id },
+      orderBy: {
+        created_at:"desc"
+      },
       include: {
         question: {
           include: {
             questionnaire: {
               select: {
-                id:true,
+                id: true,
                 title: true,
                 image: true,
                 description: true,
@@ -132,7 +135,7 @@ export const getHistoryQuestionnaireQuestion = async (req, res, next) => {
             },
             available_answers: {
               select: {
-                id:true,
+                id: true,
                 answer_text: true,
               },
             },
